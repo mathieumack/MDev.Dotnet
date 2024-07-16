@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{1C71F25C-D1B2-479A-8A64-51FAEBA6F439}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDev.Dotnet.AspNetCore", "MDev.Dotnet.AspNetCore\MDev.Dotnet.AspNetCore.csproj", "{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDev.Dotnet.Azure.StorageAccount", "MDev.Dotnet.Azure.StorageAccount\MDev.Dotnet.Azure.StorageAccount.csproj", "{C8927597-E014-405B-BC39-3398AC3BEC55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDev.Dotnet.Azure.CosmosDb", "MDev.Dotnet.Azure.CosmosDb\MDev.Dotnet.Azure.CosmosDb.csproj", "{0D94BDB7-F2C5-43F2-97A8-96CB422CF682}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDev.Dotnet.Azure.ContainerApps", "MDev.Dotnet.Azure.ContainerApps\MDev.Dotnet.Azure.ContainerApps.csproj", "{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8927597-E014-405B-BC39-3398AC3BEC55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8927597-E014-405B-BC39-3398AC3BEC55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8927597-E014-405B-BC39-3398AC3BEC55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8927597-E014-405B-BC39-3398AC3BEC55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D94BDB7-F2C5-43F2-97A8-96CB422CF682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D94BDB7-F2C5-43F2-97A8-96CB422CF682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D94BDB7-F2C5-43F2-97A8-96CB422CF682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D94BDB7-F2C5-43F2-97A8-96CB422CF682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AC3B3CD5-92CC-47BE-8F67-70295ABF7C6E} = {1C71F25C-D1B2-479A-8A64-51FAEBA6F439}
+		{C8927597-E014-405B-BC39-3398AC3BEC55} = {1C71F25C-D1B2-479A-8A64-51FAEBA6F439}
+		{0D94BDB7-F2C5-43F2-97A8-96CB422CF682} = {1C71F25C-D1B2-479A-8A64-51FAEBA6F439}
+		{A88F59C6-85E6-43F7-8312-7C4BA0E0A54C} = {1C71F25C-D1B2-479A-8A64-51FAEBA6F439}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {58FEAF09-0F8E-4ED5-99DD-360DC2203259}
+	EndGlobalSection
+EndGlobal

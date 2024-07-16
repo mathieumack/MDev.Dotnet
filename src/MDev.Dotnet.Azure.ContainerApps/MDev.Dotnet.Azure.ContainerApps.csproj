@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <Authors>MACK Mathieu</Authors>
+	  <Company>MACK Mathieu</Company>
+	  <Description>Helper methods on the IServiceCollection that let you to register all classes or interfaces in the IOC</Description>
+	  <PackageTags>ioc</PackageTags>
+	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	  <ProjectGuid>{3ec80538-77f7-4dcc-dd14-72785201b223}</ProjectGuid>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <LangVersion>preview</LangVersion>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Copyright>Copyright (c) MACK Mathieu</Copyright>
+	  <PackageProjectUrl>https://github.com/mathieumack/MDev.Dotnet</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/mathieumack/MDev.Dotnet</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+	<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.1.1" />
+	<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.2.0" />
+	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
+	<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
+	  <PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.2.0-preview-038" />
+  </ItemGroup>
+
+</Project>
