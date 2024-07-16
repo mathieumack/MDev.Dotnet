@@ -29,7 +29,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
-	<PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.2.0-preview-038" />
+	<PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.2.0" />
 	<PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
 	<PackageReference Include="Azure.Storage.Queues" Version="12.18.0" />
 	<PackageReference Include="Azure.Identity" Version="1.12.0" />

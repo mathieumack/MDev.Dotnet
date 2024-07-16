@@ -29,12 +29,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-	<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.1.1" />
-	<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+	<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
+	<PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.3.0" />
 	<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
 	<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-	  <PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.2.0-preview-038" />
+	  <PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.2.0" />
   </ItemGroup>
 
 </Project>

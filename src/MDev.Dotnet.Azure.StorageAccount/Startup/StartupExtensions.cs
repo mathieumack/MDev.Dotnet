@@ -26,6 +26,7 @@ public static class StartupExtensions
         var storageSettings = new StorageAccountSettings();
         builder.Configuration.GetRequiredSection(StorageAccountSettings.SectionName)
             .Bind(storageSettings, options => options.ErrorOnUnknownConfiguration = true);
+
         builder.Services.AddScoped(sp =>
         {
             return new BlobServiceClient(new Uri(storageSettings.BlobsEndpoint), credentials);
