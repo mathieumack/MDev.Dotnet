@@ -25,8 +25,7 @@ public static class StartupRegistersExtensions
                     // Add logging for error 400
                     options.InvalidModelStateResponseFactory = context =>
                     {
-                        var logger = context.HttpContext.RequestServices
-                                            .GetRequiredService<ILogger<T>>();
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<T>>();
                         // Get an instance of ILogger (see below) and log accordingly.
                         logger.LogWarning("Invalid model state: {Errors}", context.ModelState.GetErrors());
 
