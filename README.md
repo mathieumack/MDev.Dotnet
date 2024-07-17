@@ -1,7 +1,7 @@
 # MDev.Dotnet
 This repository contains some helpers and tools that help you to configure quickly a new Web Application based on .net.
 
-It contains some helpers and accelerators for your project. And dependending on nfrastructure, some helpers to configure quickly acces to PaaS services on different Cloud providers (Microsoft Azure yet).
+It contains some helpers and accelerators for your project. And dependending on infrastructure, some helpers to configure quickly access to PaaS services on different Cloud providers (Microsoft Azure yet).
 
 This page contains some suick resume of each package. You can check on the [Wiki](https://github.com/mathieumack/MDev.Dotnet/wiki) for more documentation. Also, documentation on code can be helpfull.
 
@@ -19,7 +19,7 @@ This package let you to configure standard services on a .net web application :
 This package let you to confgure some services when your application is deployed with docker on an Azure Container Environment as Container Apps.
 
 It helps you to configure:
-- Authenication when using Container App Authentication middleware
+- Authentication when using Container App Authentication middleware
 - Configure OpenTelemetry by using Azure Monitor or Dynatrace
 - An async controller that let you to use Dapr as pubsub service from an Azure storage queue or an Azure servicebus
 
