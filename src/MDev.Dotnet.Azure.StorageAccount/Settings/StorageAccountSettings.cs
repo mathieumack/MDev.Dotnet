@@ -7,4 +7,13 @@ public class StorageAccountSettings
     public string BlobsEndpoint { get; set; }
 
     public string QueuesEndpoint { get; set; }
+
+    public List<StorageAccountQueuesSettings> Queues { get; set; }
+}
+
+public class StorageAccountQueuesSettings
+{
+    public string Id { get; set; }
+
+    public List<string> Queues { get; set; }
 }

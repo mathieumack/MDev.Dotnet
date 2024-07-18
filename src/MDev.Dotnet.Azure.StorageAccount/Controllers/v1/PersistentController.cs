@@ -9,12 +9,12 @@ namespace MDev.Dotnet.Azure.StorageAccount.Controllers.v1;
 [ApiController]
 [ApiExplorerSettings(IgnoreApi = true)]
 [ApiVersion("1")]
-[Route("api/v{version:apiVersion}/persistance")]
-public class PersistanceController : ControllerBase
+[Route("api/v{version:apiVersion}/persistent")]
+public class PersistentController : ControllerBase
 {
-    private readonly PersistanceService _persistanceService;
+    private readonly PersistentService _persistanceService;
 
-    public PersistanceController(PersistanceService persistanceService)
+    public PersistentController(PersistentService persistanceService)
     {
         _persistanceService = persistanceService;
     }
@@ -27,9 +27,9 @@ public class PersistanceController : ControllerBase
     /// <returns></returns>
     [HttpGet("{container}/{prefix}")]
     [ProducesResponseType(typeof(List<string>), 200)]
-    public async Task<IActionResult> GetFileReferences(string container, string prefix)
+    public async Task<IActionResult> GetFileReferencesAsync(string container, string prefix)
     {
-        var uris = await _persistanceService.RetreiveBlobsUri(container, prefix);
+        var uris = await _persistanceService.RetreiveBlobsUriAsync(container, prefix);
         return Ok(uris);
     }
 
@@ -55,7 +55,7 @@ public class PersistanceController : ControllerBase
     [ProducesResponseType(typeof(StoreFileDto), 200)]
     public async Task<IActionResult> DeleteStreamOnBlobContainerAsync(string container, string prefix)
     {
-        await _persistanceService.DeleteBlobs(container, prefix);
+        await _persistanceService.DeleteBlobsAsync(container, prefix);
         return Ok();
     }
 }

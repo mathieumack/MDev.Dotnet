@@ -9,13 +9,13 @@ using System.Text;
 namespace MDev.Dotnet.Azure.StorageAccount.Helpers;
 
 [ServiceRegister(Scope = ServiceLifetime.Scoped)]
-public class PersistanceService
+public class PersistentService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly ILogger<PersistanceService> _logger;
+    private readonly ILogger<PersistentService> _logger;
 
-    public PersistanceService(BlobServiceClient blobServiceClient,
-                                ILogger<PersistanceService> logger)
+    public PersistentService(BlobServiceClient blobServiceClient,
+                                ILogger<PersistentService> logger)
     {
         _blobServiceClient = blobServiceClient;
         _logger = logger;
@@ -28,18 +28,18 @@ public class PersistanceService
     /// <param name="documentName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> RetreiveBlobUri(string container, string documentName, CancellationToken cancellationToken = default)
+    public async Task<string> RetreiveBlobUriAsync(string container, string documentName, CancellationToken cancellationToken = default)
     {
         var blobContainerClient = _blobServiceClient
             .GetBlobContainerClient(container);
         _ = await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
         var blobClient = blobContainerClient.GetBlobClient(documentName);
-        var uri = await GetBlobClientUriWithSas(blobClient, cancellationToken: cancellationToken);
+        var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
         return uri;
     }
 
-    public async Task<List<string>> RetreiveBlobsUri(string container, string prefix, CancellationToken cancellationToken = default)
+    public async Task<List<string>> RetreiveBlobsUriAsync(string container, string prefix, CancellationToken cancellationToken = default)
     {
         var blobContainerClient = _blobServiceClient
             .GetBlobContainerClient(container);
@@ -50,7 +50,7 @@ public class PersistanceService
         await foreach(var blobItem in blobContainerClient.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
         {
             var blobClient = blobContainerClient.GetBlobClient(blobItem.Name);
-            var uri = await GetBlobClientUriWithSas(blobClient, cancellationToken: cancellationToken);
+            var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
             result.Add(uri.ToString());
         }
 
@@ -64,7 +64,7 @@ public class PersistanceService
     /// <param name="blobName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task DeleteBlob(string container, string blobName, CancellationToken cancellationToken = default)
+    public async Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Delete {container}", container);
 
@@ -82,7 +82,7 @@ public class PersistanceService
     /// <param name="prefix"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task DeleteBlobs(string container, string prefix, CancellationToken cancellationToken = default)
+    public async Task DeleteBlobsAsync(string container, string prefix, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Delete {container}", container);
 
@@ -129,12 +129,12 @@ public class PersistanceService
 
         _logger.LogDebug("File {FileName} saved", fileName);
 
-        var uri = await GetBlobClientUriWithSas(blobClient, cancellationToken: cancellationToken);
+        var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
 
         return uri.ToString();
     }
 
-    public string RemoveDiacritics(string text)
+    private string RemoveDiacritics(string text)
     {
         var normalizedString = text.Normalize(NormalizationForm.FormD);
         var stringBuilder = new StringBuilder();
@@ -157,7 +157,7 @@ public class PersistanceService
         return await SaveOnBlobAsync(container, stream, fileName, null, cancellationToken);
     }
 
-    private async Task<string> GetBlobClientUriWithSas(BlobClient blobClient, CancellationToken cancellationToken = default)
+    private async Task<string> GetBlobClientUriWithSasAsync(BlobClient blobClient, CancellationToken cancellationToken = default)
     {
         var expiration = DateTimeOffset.UtcNow.AddHours(5);
 

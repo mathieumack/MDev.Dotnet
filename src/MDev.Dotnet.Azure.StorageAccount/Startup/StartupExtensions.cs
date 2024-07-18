@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MDev.Dotnet.Azure.StorageAccount.Settings;
 using Azure.Core;
+using MDev.Dotnet.Azure.StorageAccount.Helpers;
 
 namespace MDev.Dotnet.Azure.StorageAccount.Startup;
 
@@ -19,8 +20,7 @@ public static class StartupExtensions
     /// <param name="queues"></param>
     /// <returns></returns>
     public static IHostApplicationBuilder RegisterAzureStorage(this IHostApplicationBuilder builder,
-                                                                TokenCredential credentials,
-                                                                Dictionary<string, int> queues = null)
+                                                                TokenCredential credentials)
     {
         // Storage account
         var storageSettings = new StorageAccountSettings();
@@ -32,17 +32,18 @@ public static class StartupExtensions
             return new BlobServiceClient(new Uri(storageSettings.BlobsEndpoint), credentials);
         });
 
-        if (queues != null)
+        if (storageSettings.Queues != null && storageSettings.Queues.Any())
         {
-            foreach (var queue in queues.Keys)
+            foreach (var queue in storageSettings.Queues)
             {
+                var queueClients = new List<QueueClient>();
                 // Register n queue clients for same key
-                for (int i = 0; i < queues[queue]; i++)
+                for (int i = 0; i < queue.Queues.Count; i++)
                 {
-                    builder.Services.AddKeyedSingleton(queue,
-                        new QueueClient(new Uri($"{storageSettings.QueuesEndpoint}/{queue}-{i}"), credentials)
-                    );
+                    queueClients.Add(new QueueClient(new Uri($"{storageSettings.QueuesEndpoint}/{queue.Queues[i]}"), credentials));
                 }
+
+                builder.Services.AddKeyedSingleton(queue.Id, new QueuesService(queueClients));
             }
         }
 
