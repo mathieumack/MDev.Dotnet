@@ -71,6 +71,8 @@ public static class StartupRegistersExtensions
     /// Bing configuration object on section
     /// </summary>
     /// <param name="builder"></param>
+    /// <param name="bindObject">Output binded object</param>
+    /// <param name="sectionName">section name from configuration</param>
     /// <returns></returns>
     public static IHostApplicationBuilder BindConfiguration<T>(this IHostApplicationBuilder builder, out T bindObject, string sectionName) where T : class, new()
     {
@@ -80,6 +82,19 @@ public static class StartupRegistersExtensions
 
         builder.Configuration.GetRequiredSection(sectionName)
             .Bind(bindObject, options => options.ErrorOnUnknownConfiguration = true);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Bing configuration object to be available with IOptions<T>
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IHostApplicationBuilder BindConfiguration<T>(this IHostApplicationBuilder builder, string sectionName) where T : class, new()
+    {
+        builder.Services.Configure<T>(builder.Configuration.GetRequiredSection(sectionName));
 
         return builder;
     }
