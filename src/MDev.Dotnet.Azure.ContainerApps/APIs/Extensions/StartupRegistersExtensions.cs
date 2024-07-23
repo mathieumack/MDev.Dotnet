@@ -37,13 +37,15 @@ public static class StartupRegistersExtensions
     /// Clear all logging providers.
     /// </summary>
     /// <param name="builder"></param>
+    /// <param name="configuration"></param>
     /// <param name="metricsConfigurationMeters">List of meter names that must be configured for mtrics for OpenTelemetry</param>
-    public static IHostApplicationBuilder RegisterOpenTelemetry(this IHostApplicationBuilder builder,
+    public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection servicesCollection,
+                                                                IConfiguration configuration,
                                                                 List<string> metricsConfigurationMeters = null)
     {
-        builder.BindConfiguration(out OpenTelemetrySettings openTelemetrySettings, OpenTelemetrySettings.SectionName);
-
-        builder.Logging.ClearProviders();
+        var openTelemetrySettings = new OpenTelemetrySettings();
+        configuration.GetRequiredSection(OpenTelemetrySettings.SectionName)
+                .Bind(openTelemetrySettings, options => options.ErrorOnUnknownConfiguration = true);
 
         var meters = new List<string>()
         {
@@ -54,23 +56,6 @@ public static class StartupRegistersExtensions
 
         if (metricsConfigurationMeters != null)
             meters.AddRange(metricsConfigurationMeters);
-
-        return builder;
-    }
-
-    /// <summary>
-    /// Register OpenTelemetry as ILogger.
-    /// Clear all logging providers.
-    /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="metricsConfigurationMeters">List of meter names that must be configured for mtrics for OpenTelemetry</param>
-    public static IServiceCollection RegisterOpenTelemetry(this IServiceCollection servicesCollection,
-                                                                IConfiguration configuration,
-                                                                List<string> meters)
-    {
-        var openTelemetrySettings = new OpenTelemetrySettings();
-        configuration.GetRequiredSection(OpenTelemetrySettings.SectionName)
-                .Bind(openTelemetrySettings, options => options.ErrorOnUnknownConfiguration = true);
 
         // OTEL_EXPORTER_OTLP_ENDPOINT is supported natively by Container Apps (https://learn.microsoft.com/en-us/azure/container-apps/opentelemetry-agents?tabs=arm#environment-variables)
         if (openTelemetrySettings.ServiceType == "AppInsights")
