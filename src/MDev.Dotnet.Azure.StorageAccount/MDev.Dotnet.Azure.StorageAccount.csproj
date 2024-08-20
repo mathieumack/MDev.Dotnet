@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <Authors>MACK Mathieu</Authors>
+	  <Company>MACK Mathieu</Company>
+	  <Description>Helper methods on the IServiceCollection that let you to register all classes or interfaces in the IOC</Description>
+	  <PackageTags>ioc</PackageTags>
+	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	  <ProjectGuid>{3ec80538-77f7-4dcc-dd14-72785201b221}</ProjectGuid>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <LangVersion>preview</LangVersion>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Copyright>Copyright (c) MACK Mathieu</Copyright>
+	  <PackageProjectUrl>https://github.com/mathieumack/MDev.Dotnet</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/mathieumack/MDev.Dotnet</RepositoryUrl>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+	<PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.3.0" />
+	<PackageReference Include="Azure.Storage.Blobs" Version="12.21.0" />
+	<PackageReference Include="Azure.Storage.Queues" Version="12.19.0" />
+	<PackageReference Include="Azure.Identity" Version="1.12.0" />
+  </ItemGroup>
+
+</Project>
