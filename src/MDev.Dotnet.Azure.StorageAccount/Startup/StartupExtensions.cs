@@ -25,7 +25,10 @@ public static class StartupExtensions
         // Storage account
         var storageSettings = new StorageAccountSettings();
         builder.Configuration.GetRequiredSection(StorageAccountSettings.SectionName)
-            .Bind(storageSettings, options => options.ErrorOnUnknownConfiguration = true);
+            .Bind(storageSettings, options =>
+            {
+                options.ErrorOnUnknownConfiguration = true;
+            });
 
         builder.Services.AddScoped(sp =>
         {
@@ -34,13 +37,19 @@ public static class StartupExtensions
 
         if (storageSettings.Queues != null && storageSettings.Queues.Any())
         {
+            var queuClientOptions = new QueueClientOptions();
+            if (storageSettings.QueueMessagesEncodeBase64)
+                queuClientOptions.MessageEncoding = QueueMessageEncoding.Base64;
+
             foreach (var queue in storageSettings.Queues)
             {
                 var queueClients = new List<QueueClient>();
                 // Register n queue clients for same key
                 for (int i = 0; i < queue.Queues.Count; i++)
                 {
-                    queueClients.Add(new QueueClient(new Uri($"{storageSettings.QueuesEndpoint}/{queue.Queues[i]}"), credentials));
+
+                    var client = new QueueClient(new Uri($"{storageSettings.QueuesEndpoint}/{queue.Queues[i]}"), credentials, queuClientOptions);
+                    queueClients.Add(client);
                 }
 
                 builder.Services.AddKeyedSingleton(queue.Id, new QueuesService(queueClients));
