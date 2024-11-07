@@ -8,6 +8,8 @@ public class StorageAccountSettings
 
     public string QueuesEndpoint { get; set; }
 
+    public bool QueueMessagesEncodeBase64 { get; set; } = false;
+
     public List<StorageAccountQueuesSettings> Queues { get; set; }
 }
 
