@@ -1,6 +1,5 @@
 ﻿using MDev.Dotnet.AspNetCore.JsonPatchs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -112,5 +111,36 @@ public static class StartupRegistersExtensions
         builder.Services.Configure<T>(builder.Configuration.GetRequiredSection(sectionName));
 
         return builder;
+    }
+
+    /// <summary>
+    /// Bing configuration object on section
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="bindObject">Output binded object</param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IServiceCollection BindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, out T bindObject, string sectionName) where T : class, new()
+    {
+        bindObject = new();
+
+        services.Configure<T>(configuration.GetRequiredSection(sectionName));
+
+        configuration.GetRequiredSection(sectionName).Bind(bindObject, options => options.ErrorOnUnknownConfiguration = true);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Bing configuration object to be available with IOptions<T>
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IServiceCollection BindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, string sectionName) where T : class, new()
+    {
+        services.Configure<T>(configuration.GetRequiredSection(sectionName));
+
+        return services;
     }
 } 
