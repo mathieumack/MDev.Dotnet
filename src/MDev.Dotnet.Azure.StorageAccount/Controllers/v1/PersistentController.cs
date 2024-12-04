@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MDev.Dotnet.Azure.StorageAccount.DTOs;
 using MDev.Dotnet.Azure.StorageAccount.Helpers;
 using Asp.Versioning;
+using System.Net;
 
 namespace MDev.Dotnet.Azure.StorageAccount.Controllers.v1;
 
@@ -25,12 +26,30 @@ public class PersistentController : ControllerBase
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    [HttpGet("{container}/{prefix}")]
+    [HttpGet("{container}/{prefix}/uri")]
     [ProducesResponseType(typeof(List<string>), 200)]
     public async Task<IActionResult> GetFileReferencesAsync(string container, string prefix)
     {
         var uris = await _persistanceService.RetreiveBlobsUriAsync(container, prefix);
         return Ok(uris);
+    }
+
+    /// <summary>
+    /// Get the document as markdown format
+    /// </summary>
+    /// <param name="id">Document id</param>
+    /// <param name="format">Format of export. Supported values : markdown, raw, text</param>
+    [HttpGet("{container}/{blobName}/download")]
+    [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> ExportBlobAsync(string container, string blobName, [FromQuery]string documentName = null, CancellationToken cancellationToken)
+    {
+        // Read file :
+        var blob = await _persistanceService.DownloadBlobContent(container, blobName, cancellationToken);
+        if(blob == Stream.Null)
+            return NotFound();
+
+        return File(blob, "application/octet-stream", (string.IsNullOrWhiteSpace(documentName) ? blobName : documentName));
     }
 
     /// <summary>
@@ -47,7 +66,7 @@ public class PersistentController : ControllerBase
     }
 
     /// <summary>
-    /// Allow to store a file
+    /// Delete a blob on th storage account
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
