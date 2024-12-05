@@ -42,7 +42,7 @@ public class PersistentController : ControllerBase
     [HttpGet("{container}/{blobName}/download")]
     [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<IActionResult> ExportBlobAsync(string container, string blobName, [FromQuery]string documentName = null, CancellationToken cancellationToken)
+    public async Task<IActionResult> ExportBlobAsync(string container, string blobName, CancellationToken cancellationToken, [FromQuery]string documentName = null)
     {
         // Read file :
         var blob = await _persistanceService.DownloadBlobContent(container, blobName, cancellationToken);
