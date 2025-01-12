@@ -117,13 +117,13 @@ public class PersistentService
         }
     }
 
-    public async Task<string> SaveOnBlobAsync(string container, 
+    public async Task SaveOnBlobAsync(string container, 
                                                 Stream blobContent, 
                                                 string fileName,
                                                 Dictionary<string, string> metadatas = null, 
                                                 CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Save {FileName} to blob", fileName);
+        _logger.LogDebug("Save {FileName} to blob", fileName);
 
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
         _ = await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
@@ -143,10 +143,6 @@ public class PersistentService
         }
 
         _logger.LogDebug("File {FileName} saved", fileName);
-
-        var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
-
-        return uri.ToString();
     }
 
     private string RemoveDiacritics(string text)
@@ -166,10 +162,10 @@ public class PersistentService
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 
-    public async Task<string> SaveOnBlobAsync(string container, string blobContent, string fileName, CancellationToken cancellationToken = default)
+    public async Task SaveOnBlobAsync(string container, string blobContent, string fileName, CancellationToken cancellationToken = default)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(blobContent));
-        return await SaveOnBlobAsync(container, stream, fileName, null, cancellationToken);
+        await SaveOnBlobAsync(container, stream, fileName, null, cancellationToken);
     }
 
     private async Task<string> GetBlobClientUriWithSasAsync(BlobClient blobClient, CancellationToken cancellationToken = default)
