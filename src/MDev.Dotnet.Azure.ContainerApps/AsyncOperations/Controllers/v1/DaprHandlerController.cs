@@ -8,6 +8,7 @@ namespace MDev.Dotnet.AspNetCore.AsyncOperations.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("api/v{version:apiVersion}/daprhandler")]
 public class DaprHandlerController : ControllerBase
 {
