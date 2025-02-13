@@ -11,19 +11,21 @@ public class QueuesService
         this.queueClients = queueClients;
     }
 
-    public async Task SendMessagesAsync<T>(List<T> messageObjects)
-    {
-        await SendMessagesAsync(messageObjects, CancellationToken.None);
-    }
-
-    public async Task SendMessagesAsync<T>(List<T> messageObjects, CancellationToken cancellationToken)
+    public async Task SendMessagesAsync<T>(List<T> messageObjects,
+                                            TimeSpan? visibilityTimeout = null,
+                                            TimeSpan? timeToLive = null,
+                                            CancellationToken cancellationToken = default)
     {
         if (messageObjects is null)
             return;
 
         for (int i = 0; i < messageObjects.Count; i++)
         {
-            await SendMessageAsync(messageObjects[i], i % queueClients.Count, cancellationToken);
+            await SendMessageAsync(messageObjects[i], 
+                                    i % queueClients.Count,
+                                    visibilityTimeout,
+                                    timeToLive,
+                                    cancellationToken: cancellationToken);
         }
     }
 
@@ -33,9 +35,16 @@ public class QueuesService
     /// <typeparam name="T"></typeparam>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task SendMessageAsync<T>(T messageObject)
+    public async Task SendMessageAsync<T>(T messageObject,
+                                            TimeSpan? visibilityTimeout = null,
+                                            TimeSpan? timeToLive = null,
+                                            CancellationToken cancellationToken = default)
     {
-        await SendMessageAsync(messageObject, CancellationToken.None);
+        await SendMessageAsync(messageObject,
+                                Random.Shared.Next(0, queueClients.Count),
+                                visibilityTimeout,
+                                timeToLive,
+                                cancellationToken);
     }
 
     /// <summary>
@@ -44,24 +53,20 @@ public class QueuesService
     /// <typeparam name="T"></typeparam>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task SendMessageAsync<T>(T messageObject, CancellationToken cancellationToken)
-    {
-        await SendMessageAsync(messageObject, Random.Shared.Next(0, queueClients.Count), cancellationToken);
-    }
-
-    /// <summary>
-    /// Push an object into a Binary message to an available queue
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    private async Task SendMessageAsync<T>(T messageObject, int queueIndex, CancellationToken cancellationToken)
+    private async Task SendMessageAsync<T>(T messageObject, 
+                                            int queueIndex,
+                                            TimeSpan? visibilityTimeout = null, 
+                                            TimeSpan? timeToLive = null,
+                                            CancellationToken cancellationToken = default)
     {
         if (messageObject is null)
             return;
 
         // Send async completion request :
         var queueClient = queueClients[queueIndex];
-        await queueClient.SendMessageAsync(new BinaryData(messageObject), cancellationToken: cancellationToken);
+        await queueClient.SendMessageAsync(new BinaryData(messageObject),
+                                            visibilityTimeout: visibilityTimeout,
+                                            timeToLive: timeToLive,
+                                            cancellationToken: cancellationToken);
     }
 }
