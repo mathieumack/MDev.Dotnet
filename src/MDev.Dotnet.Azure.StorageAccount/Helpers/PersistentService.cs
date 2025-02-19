@@ -62,7 +62,7 @@ public class PersistentService
     /// <param name="blobName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>Document stream, null instead</returns>
-    public async Task<Stream> DownloadBlobContent(string container, string blobName, CancellationToken cancellationToken = default)
+    public async Task<Stream> DownloadBlobContentAsync(string container, string blobName, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Download {container}", container);
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
