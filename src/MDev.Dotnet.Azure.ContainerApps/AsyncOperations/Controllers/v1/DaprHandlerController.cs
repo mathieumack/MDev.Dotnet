@@ -8,17 +8,15 @@ namespace MDev.Dotnet.AspNetCore.AsyncOperations.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1")]
+[ApiExplorerSettings(IgnoreApi = true)]
 [Route("api/v{version:apiVersion}/daprhandler")]
 public class DaprHandlerController : ControllerBase
 {
     private readonly AsyncOperationRequestsService asyncOperationRequestsService;
-    private readonly ILogger<DaprHandlerController> logger;
 
-    public DaprHandlerController(AsyncOperationRequestsService asyncOperationRequestsService,
-                                    ILogger<DaprHandlerController> logger)
+    public DaprHandlerController(AsyncOperationRequestsService asyncOperationRequestsService)
     {
         this.asyncOperationRequestsService = asyncOperationRequestsService;
-        this.logger = logger;
     }
 
     /// <summary>
@@ -27,7 +25,7 @@ public class DaprHandlerController : ControllerBase
     /// <param name="item"></param>
     /// <returns></returns>
     [HttpPost("operationrequest")]
-    public async Task<IActionResult> OperationRequest([FromBody] AsyncOperationRequestMessage item, CancellationToken cancellationToken)
+    public virtual async Task<IActionResult> OperationRequestAsync([FromBody] AsyncOperationRequestMessage item, CancellationToken cancellationToken)
     {
         await asyncOperationRequestsService.HandleAsync(item, cancellationToken);
         return Ok();

@@ -25,24 +25,22 @@ public class PersistentService
     /// Retreive a public uri with a sas token for a file in the storage account
     /// </summary>
     /// <param name="container"></param>
-    /// <param name="documentName"></param>
+    /// <param name="blobName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> RetreiveBlobUriAsync(string container, string documentName, CancellationToken cancellationToken = default)
+    public async Task<string> RetreiveBlobUriAsync(string container, string blobName, CancellationToken cancellationToken = default)
     {
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
         _ = await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
-        var blobClient = blobContainerClient.GetBlobClient(documentName);
+        var blobClient = blobContainerClient.GetBlobClient(blobName);
         var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
         return uri;
     }
 
     public async Task<List<string>> RetreiveBlobsUriAsync(string container, string prefix, CancellationToken cancellationToken = default)
     {
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
         _ = await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
         var result = new List<string>();
@@ -58,6 +56,26 @@ public class PersistentService
     }
 
     /// <summary>
+    /// Allow to retreive a blob stream from container and blobName
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="blobName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Document stream, null instead</returns>
+    public async Task<Stream> DownloadBlobContentAsync(string container, string blobName, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Download {container}", container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
+        var blobClient = blobContainerClient.GetBlobClient(blobName);
+        if(await blobClient.ExistsAsync())
+        {
+            var response = await blobClient.DownloadAsync(cancellationToken: cancellationToken);
+            return response.Value.Content;
+        }
+        return Stream.Null;
+    }
+
+    /// <summary>
     /// Delete a blob from the storage :
     /// </summary>
     /// <param name="container"></param>
@@ -68,8 +86,7 @@ public class PersistentService
     {
         _logger.LogInformation("Delete {container}", container);
 
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
 
         var blobClient = blobContainerClient.GetBlobClient(blobName);
         _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
@@ -86,8 +103,7 @@ public class PersistentService
     {
         _logger.LogInformation("Delete {container}", container);
 
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
 
         if(string.IsNullOrWhiteSpace(prefix)) // We want to delete the container.
             _ = await blobContainerClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
@@ -101,16 +117,15 @@ public class PersistentService
         }
     }
 
-    public async Task<string> SaveOnBlobAsync(string container, 
+    public async Task SaveOnBlobAsync(string container, 
                                                 Stream blobContent, 
                                                 string fileName,
                                                 Dictionary<string, string> metadatas = null, 
                                                 CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Save {FileName} to blob", fileName);
+        _logger.LogDebug("Save {FileName} to blob", fileName);
 
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
         _ = await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
         var blobClient = blobContainerClient.GetBlobClient(fileName);
@@ -128,10 +143,6 @@ public class PersistentService
         }
 
         _logger.LogDebug("File {FileName} saved", fileName);
-
-        var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
-
-        return uri.ToString();
     }
 
     private string RemoveDiacritics(string text)
@@ -151,10 +162,10 @@ public class PersistentService
         return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
     }
 
-    public async Task<string> SaveOnBlobAsync(string container, string blobContent, string fileName, CancellationToken cancellationToken = default)
+    public async Task SaveOnBlobAsync(string container, string blobContent, string fileName, CancellationToken cancellationToken = default)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(blobContent));
-        return await SaveOnBlobAsync(container, stream, fileName, null, cancellationToken);
+        await SaveOnBlobAsync(container, stream, fileName, null, cancellationToken);
     }
 
     private async Task<string> GetBlobClientUriWithSasAsync(BlobClient blobClient, CancellationToken cancellationToken = default)

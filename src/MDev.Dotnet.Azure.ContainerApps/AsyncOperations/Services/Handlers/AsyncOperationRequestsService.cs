@@ -23,7 +23,7 @@ public class AsyncOperationRequestsService
     {
         if(!handlers.Any(e => e.HandlerOperationName.Equals(item.OperationName)))
         {
-            logger.LogInformation($"async.operation : No service registered for {item.OperationName}");
+            logger.LogInformation("async.operation : No service registered for {operation}", item.OperationName);
             return;
         }
 
