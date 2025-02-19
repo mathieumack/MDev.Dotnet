@@ -28,7 +28,7 @@ public class DaprHandlerController : ControllerBase
     /// <param name="item"></param>
     /// <returns></returns>
     [HttpPost("operationrequest")]
-    public async Task<IActionResult> OperationRequest([FromBody] AsyncOperationRequestMessage item, CancellationToken cancellationToken)
+    public virtual async Task<IActionResult> OperationRequest([FromBody] AsyncOperationRequestMessage item, CancellationToken cancellationToken)
     {
         await asyncOperationRequestsService.HandleAsync(item, cancellationToken);
         return Ok();
