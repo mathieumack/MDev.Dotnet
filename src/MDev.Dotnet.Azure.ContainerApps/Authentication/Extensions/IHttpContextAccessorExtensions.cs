@@ -1,19 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using System.Web;
 
 namespace MDev.Dotnet.Azure.ContainerApps.Authentication.Extensions;
 
 public static class IHttpContextAccessorExtensions
 {
-    public static string GetUserId(this IHttpContextAccessor httpContextAccessor)
+    public static string GetUserId(this IHttpContextAccessor httpContextAccessor, bool decode = false)
     {
-        return httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL-ID");
+        return httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL-ID", decode);
     }
 
-    public static string GetUserFullName(this IHttpContextAccessor httpContextAccessor)
+    /// <summary>
+    /// Get the user full name based on header X-MS-CLIENT-PRINCIPAL-NAME
+    /// </summary>
+    /// <param name="httpContextAccessor"></param>
+    /// <param name="decode">Indicate if the value must be uri decoded asvalue is encoded by the the authentication middleware</param>
+    /// <returns></returns>
+    public static string GetUserFullName(this IHttpContextAccessor httpContextAccessor, bool decode = false)
     {
-        return httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL-NAME");
+        return httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL-NAME", decode);
     }
 
     public static async Task<IEnumerable<UserClaim>> GetClaims(this IHttpContextAccessor httpContextAccessor)
@@ -27,10 +34,14 @@ public static class IHttpContextAccessorExtensions
         return clientPrincipal.Claims;
     }
 
-    public static string GetUserValue(this IHttpContextAccessor httpContextAccessor, string headerName)
+    public static string GetUserValue(this IHttpContextAccessor httpContextAccessor, string headerName, bool decode = false)
     {
-        var userPrincipalId = httpContextAccessor.HttpContext.Request.Headers[headerName].ToString();
-        return userPrincipalId;
+        var result = httpContextAccessor.HttpContext.Request.Headers[headerName].ToString();
+        if (!string.IsNullOrWhiteSpace(result) && decode)
+        {
+            result = HttpUtility.UrlDecode(result);
+        }
+        return result;
     }
 
     public static void LogHeaders(this IHttpContextAccessor contextAccessor, ILogger logger)
