@@ -29,7 +29,7 @@ public class AsyncOperationRequestsService
 
         foreach (var handler in handlers.Where(e => e.HandlerOperationName.Equals(item.OperationName)))
         {
-            logger.LogInformation($"call async.operation.{handler.HandlerOperationName}");
+            logger.LogInformation("call async.operation.{handlerOperationName}", handler.HandlerOperationName);
             await handler.HandleRequest(item, cancellationToken);
         }
     }
