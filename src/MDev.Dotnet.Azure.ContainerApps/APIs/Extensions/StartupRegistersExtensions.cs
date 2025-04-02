@@ -10,6 +10,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace MDev.Dotnet.AspNetCore.OpenTelemetry.Apis.Extensions;
 
@@ -87,6 +88,16 @@ public static class StartupRegistersExtensions
                 })
                 .WithTracing(tracesConfiguration =>
                 {
+                    tracesConfiguration.AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.EnrichWithHttpResponse = (activity, response) =>
+                        {
+                            if (response.StatusCode == 404)
+                            {
+                                activity.SetStatus(ActivityStatusCode.Ok);
+                            }
+                        };
+                    });
                 });
         }
         else
@@ -115,6 +126,19 @@ public static class StartupRegistersExtensions
                             if(!string.IsNullOrWhiteSpace(endPointAuhorization))
                                 options.Headers = $"Authorization={endPointAuhorization}";
                         });
+                })
+                .WithTracing(tracesConfiguration =>
+                {
+                    tracesConfiguration.AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.EnrichWithHttpResponse = (activity, response) =>
+                        {
+                            if (response.StatusCode == 404)
+                            {
+                                activity.SetStatus(ActivityStatusCode.Ok);
+                            }
+                        };
+                    });
                 })
                 .WithMetrics(builderDyn =>
                 {
