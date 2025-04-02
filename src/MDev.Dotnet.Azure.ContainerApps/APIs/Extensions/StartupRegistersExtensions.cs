@@ -10,6 +10,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace MDev.Dotnet.AspNetCore.OpenTelemetry.Apis.Extensions;
 
@@ -71,8 +72,26 @@ public static class StartupRegistersExtensions
                                                                 List<string> meters)
     {
         var openTelemetrySettings = new OpenTelemetrySettings();
-        configuration.GetRequiredSection(OpenTelemetrySettings.SectionName)
-                .Bind(openTelemetrySettings, options => options.ErrorOnUnknownConfiguration = true);
+        configuration.GetRequiredSection(OpenTelemetrySettings.SectionName).Bind(openTelemetrySettings, options => options.ErrorOnUnknownConfiguration = true);
+
+        // Check for IgnoreErrorStatusCodes that should return status OK for activities :
+        var traceConfiguration = new Action<TracerProviderBuilder>(builder => {});
+        if (openTelemetrySettings.IgnoreErrorStatusCode != null && openTelemetrySettings.IgnoreErrorStatusCode.Any())
+        {
+            traceConfiguration = new Action<TracerProviderBuilder>(builder =>
+            {
+                builder.AddAspNetCoreInstrumentation(options =>
+                {
+                    options.EnrichWithHttpResponse = (activity, response) =>
+                    {
+                        if (openTelemetrySettings.IgnoreErrorStatusCode.Contains(response.StatusCode))
+                        {
+                            activity.SetStatus(ActivityStatusCode.Ok);
+                        }
+                    };
+                });
+            });
+        }
 
         // OTEL_EXPORTER_OTLP_ENDPOINT is supported natively by Container Apps (https://learn.microsoft.com/en-us/azure/container-apps/opentelemetry-agents?tabs=arm#environment-variables)
         if (openTelemetrySettings.ServiceType == "AppInsights")
@@ -82,12 +101,9 @@ public static class StartupRegistersExtensions
                 .UseAzureMonitor()
                 .WithMetrics(metricsConfiguration =>
                 {
-                    metricsConfiguration
-                        .AddMeter(meters.ToArray());
+                    metricsConfiguration.AddMeter(meters.ToArray());
                 })
-                .WithTracing(tracesConfiguration =>
-                {
-                });
+                .WithTracing(traceConfiguration);
         }
         else
         {
@@ -116,6 +132,7 @@ public static class StartupRegistersExtensions
                                 options.Headers = $"Authorization={endPointAuhorization}";
                         });
                 })
+                .WithTracing(traceConfiguration)
                 .WithMetrics(builderDyn =>
                 {
                     builderDyn
