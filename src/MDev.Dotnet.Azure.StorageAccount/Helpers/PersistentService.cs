@@ -22,6 +22,57 @@ public class PersistentService
     }
 
     /// <summary>
+    /// Retreive a blob client from the storage account for a specified container and file name
+    /// </summary>
+    /// <param name="containerName"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public BlobClient GetBlobAsync(string containerName, string fileName)
+    {
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+        return blobClient;
+    }
+
+    /// <summary>
+    /// Delete a blob from the storage
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="blobName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Delete {container}", container);
+
+        var blobContainerClient = _blobServiceClient
+            .GetBlobContainerClient(container);
+
+        var blobClient = blobContainerClient.GetBlobClient(blobName);
+        _ = await blobClient.DeleteAsync(cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Try to delete a blob from the storage
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="blobName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task DeleteBlobIfExistsAsync(string container, string blobName, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Delete {container}", container);
+
+        var blobContainerClient = _blobServiceClient
+            .GetBlobContainerClient(container);
+
+        var blobClient = blobContainerClient.GetBlobClient(blobName);
+        _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
     /// Retreive a public uri with a sas token for a file in the storage account
     /// </summary>
     /// <param name="container"></param>
@@ -73,23 +124,6 @@ public class PersistentService
             return response.Value.Content;
         }
         return Stream.Null;
-    }
-
-    /// <summary>
-    /// Delete a blob from the storage :
-    /// </summary>
-    /// <param name="container"></param>
-    /// <param name="blobName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Delete {container}", container);
-
-        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
-
-        var blobClient = blobContainerClient.GetBlobClient(blobName);
-        _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
     /// <summary>
