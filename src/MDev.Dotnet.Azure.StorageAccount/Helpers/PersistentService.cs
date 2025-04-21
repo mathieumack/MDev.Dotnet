@@ -127,23 +127,6 @@ public class PersistentService
     }
 
     /// <summary>
-    /// Delete a blob from the storage :
-    /// </summary>
-    /// <param name="container"></param>
-    /// <param name="blobName"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task DeleteBlobAsync(string container, string blobName, CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation("Delete {container}", container);
-
-        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
-
-        var blobClient = blobContainerClient.GetBlobClient(blobName);
-        _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
-    }
-
-    /// <summary>
     /// Delete multiple blob at same time
     /// </summary>
     /// <param name="container"></param>
