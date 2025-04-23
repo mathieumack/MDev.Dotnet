@@ -6,7 +6,7 @@ namespace MDev.Dotnet.AspNetCore.Apis.Extensions;
 
 public static class OpenApiExtensions
 {
-    public static IHostApplicationBuilder RegisterOpenApi<T>(this IHostApplicationBuilder builder,
+    public static IHostApplicationBuilder RegisterOpenApi(this IHostApplicationBuilder builder,
                                                                 bool forceHttpsServers = false)
     {
         builder.Services.AddOpenApi(options => {
