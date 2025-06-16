@@ -21,6 +21,26 @@ public class PersistentService
     }
 
     /// <summary>
+    /// Delete a container blob if it exists.
+    /// </summary>
+    /// <param name="containerName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<bool> DeleteContainerAsync(string containerName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _blobServiceClient.DeleteBlobContainerAsync(containerName);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during blob container deletion for container '{containerName}'.", containerName);
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Crée un container blob s'il n'existe pas déjà.
     /// </summary>
     /// <param name="containerName">Nom du nouveau container</param>
@@ -36,7 +56,7 @@ public class PersistentService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erreur lors de la création du container '{containerName}'.", containerName);
+            _logger.LogError(ex, "Error during container creation for container '{containerName}'.", containerName);
             throw;
         }
     }
@@ -67,8 +87,7 @@ public class PersistentService
     {
         _logger.LogInformation("Delete {container}", container);
 
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
 
         var blobClient = blobContainerClient.GetBlobClient(blobName);
         _ = await blobClient.DeleteAsync(cancellationToken: cancellationToken);
@@ -85,8 +104,7 @@ public class PersistentService
     {
         _logger.LogInformation("Delete {container}", container);
 
-        var blobContainerClient = _blobServiceClient
-            .GetBlobContainerClient(container);
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
 
         var blobClient = blobContainerClient.GetBlobClient(blobName);
         _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
