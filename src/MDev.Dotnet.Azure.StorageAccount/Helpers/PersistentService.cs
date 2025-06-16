@@ -14,11 +14,31 @@ public class PersistentService
     private readonly BlobServiceClient _blobServiceClient;
     private readonly ILogger<PersistentService> _logger;
 
-    public PersistentService(BlobServiceClient blobServiceClient,
-                                ILogger<PersistentService> logger)
+    public PersistentService(BlobServiceClient blobServiceClient, ILogger<PersistentService> logger)
     {
         _blobServiceClient = blobServiceClient;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Crée un container blob s'il n'existe pas déjà.
+    /// </summary>
+    /// <param name="containerName">Nom du nouveau container</param>
+    /// <param name="cancellationToken">Token d'annulation</param>
+    /// <returns>True si le container a été créé, False s'il existait déjà</returns>
+    public async Task<bool> CreateContainerIfNotExistsAsync(string containerName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            await blobContainerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erreur lors de la création du container '{containerName}'.", containerName);
+            throw;
+        }
     }
 
     /// <summary>
