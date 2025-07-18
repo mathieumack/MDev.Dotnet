@@ -134,7 +134,7 @@ public class PersistentService
 
         var result = new List<string>();
 
-        await foreach(var blobItem in blobContainerClient.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
+        await foreach (var blobItem in blobContainerClient.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
         {
             var blobClient = blobContainerClient.GetBlobClient(blobItem.Name);
             var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
@@ -156,7 +156,7 @@ public class PersistentService
         _logger.LogInformation("Download {container}", container);
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
         var blobClient = blobContainerClient.GetBlobClient(blobName);
-        if(await blobClient.ExistsAsync())
+        if (await blobClient.ExistsAsync())
         {
             var response = await blobClient.DownloadAsync(cancellationToken: cancellationToken);
             return response.Value.Content;
@@ -177,7 +177,7 @@ public class PersistentService
 
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container);
 
-        if(string.IsNullOrWhiteSpace(prefix)) // We want to delete the container.
+        if (string.IsNullOrWhiteSpace(prefix)) // We want to delete the container.
             _ = await blobContainerClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
         else
         {
@@ -189,10 +189,10 @@ public class PersistentService
         }
     }
 
-    public async Task SaveOnBlobAsync(string container, 
-                                                Stream blobContent, 
+    public async Task SaveOnBlobAsync(string container,
+                                                Stream blobContent,
                                                 string fileName,
-                                                Dictionary<string, string> metadatas = null, 
+                                                Dictionary<string, string> metadatas = null,
                                                 CancellationToken cancellationToken = default)
     {
         _logger.LogDebug("Save {FileName} to blob", fileName);
@@ -272,5 +272,26 @@ public class PersistentService
         }
 
         return uri.ToString();
+    }
+
+    /// <summary>
+    /// Copy bloc file async from a source container to a destination container
+    /// </summary>
+    /// <param name="sourceContainer"></param>
+    /// <param name="sourceStorageFileName"></param>
+    /// <param name="destContainer"></param>
+    /// <param name="destFilename"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task CopyBlocFileAsync(string sourceContainer, string sourceStorageFileName, string destContainer, string destFilename, CancellationToken cancellationToken = default)
+    {
+        var sourceBlobContainerClient = _blobServiceClient.GetBlobContainerClient(sourceContainer);
+        var sourceBlobClient = sourceBlobContainerClient.GetBlobClient(sourceStorageFileName);
+
+        var destBlobContainerClient = _blobServiceClient.GetBlobContainerClient(destContainer);
+        var destBlobClient = destBlobContainerClient.GetBlobClient(destFilename);
+
+        var response = await sourceBlobClient.DownloadAsync(cancellationToken: cancellationToken);
+        await destBlobClient.UploadAsync(response.Value.Content, true, cancellationToken);
     }
 }
