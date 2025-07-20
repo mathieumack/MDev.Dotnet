@@ -7,9 +7,18 @@ namespace MDev.Dotnet.AspNetCore.Apis.Extensions;
 public static class OpenApiExtensions
 {
     public static IHostApplicationBuilder RegisterOpenApi(this IHostApplicationBuilder builder,
+                                                                bool includeServerUrls = true,
                                                                 bool forceHttpsServers = false)
     {
         builder.Services.AddOpenApi(options => {
+            if (!includeServerUrls)
+            {
+                options.AddDocumentTransformer((document, context, cancellationToken) => {
+                    document.Servers.Clear();
+                    return Task.CompletedTask;
+                });
+            }
+            
             if (forceHttpsServers)
             {
                 options.AddDocumentTransformer((document, context, cancellationToken) => {
@@ -20,6 +29,7 @@ public static class OpenApiExtensions
                     return Task.CompletedTask;
                 });
             }
+
         });
 
         return builder;
