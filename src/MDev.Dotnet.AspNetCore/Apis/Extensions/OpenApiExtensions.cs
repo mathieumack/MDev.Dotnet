@@ -14,7 +14,13 @@ public static class OpenApiExtensions
             if (!includeServerUrls)
             {
                 options.AddDocumentTransformer((document, context, cancellationToken) => {
+                    if (document.Servers is null || !document.Servers.Any())
+                    {
+                        return Task.CompletedTask;
+                    }
+                    
                     document.Servers.Clear();
+
                     return Task.CompletedTask;
                 });
             }
@@ -22,6 +28,11 @@ public static class OpenApiExtensions
             if (forceHttpsServers)
             {
                 options.AddDocumentTransformer((document, context, cancellationToken) => {
+                    if(document.Servers is null || !document.Servers.Any())
+                    {
+                        return Task.CompletedTask;
+                    }
+
                     foreach (var server in document.Servers)
                     {
                         server.Url = server.Url.Replace("http://", "https://");
