@@ -20,6 +20,50 @@ public class PersistentService
         _logger = logger;
     }
 
+    public async Task<List<BlobContainerClient>> GetAllContainersAsync(CancellationToken cancellationToken = default)
+    {
+        var blobContainers = new List<BlobContainerClient>();
+        try
+        {
+            await foreach (var container in _blobServiceClient.GetBlobContainersAsync(cancellationToken: cancellationToken))
+            {
+                var blobContainerClient = _blobServiceClient.GetBlobContainerClient(container.Name);
+                blobContainers.Add(blobContainerClient);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during blob containers retrieval.");
+            throw;
+        }
+        return blobContainers;
+    }
+
+    /// <summary>
+    /// Check if a container is empty (no blobs inside).
+    /// </summary>
+    /// <param name="containerName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<bool> IsEmptyContainerAsync(string containerName, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            int count = 0;
+            await foreach (var blobItem in blobContainerClient.GetBlobsAsync(cancellationToken: cancellationToken))
+            {
+                return false;
+            }
+            return count == 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during blob count for container '{containerName}'.", containerName);
+            throw;
+        }
+    }
+
     /// <summary>
     /// Delete a container blob if it exists.
     /// </summary>
