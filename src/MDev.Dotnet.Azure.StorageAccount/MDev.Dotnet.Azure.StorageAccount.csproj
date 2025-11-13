@@ -30,7 +30,7 @@
 
 	<ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
-	<PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.6.0" />
+	<PackageReference Include="ServiceCollectionHelpers.AssemblyFinder" Version="1.7.0" />
 	<PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
 	<PackageReference Include="Azure.Storage.Queues" Version="12.24.0" />
 	<PackageReference Include="Azure.Identity" Version="1.17.0" />
