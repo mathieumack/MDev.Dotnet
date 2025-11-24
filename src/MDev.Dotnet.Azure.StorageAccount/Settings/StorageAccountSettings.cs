@@ -12,10 +12,3 @@ public class StorageAccountSettings
 
     public List<StorageAccountQueuesSettings> Queues { get; set; }
 }
-
-public class StorageAccountQueuesSettings
-{
-    public string Id { get; set; }
-
-    public List<string> Queues { get; set; }
-}

@@ -1,5 +1,4 @@
-﻿using MDev.Dotnet.AspNetCore.JsonPatchs;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,22 +16,16 @@ public static class StartupRegistersExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="builder"></param>
     /// <param name="allowSynchronousIO">Indicate if synchronous IO must be enabled for HTTP Steams</param>
-    /// <param name="addSupportforJsonPatch">Indicate if controllers must haveto support JsonPatchDocuments objects</param>
     /// <param name="mvcOptions">Allow to override or execute operations on controllers options</param>
     /// <returns></returns>
     public static IHostApplicationBuilder RegisterControllers<T>(this IHostApplicationBuilder builder, 
                                                                     bool allowSynchronousIO = false, 
-                                                                    bool addSupportforJsonPatch = false,
                                                                     Action<MvcOptions> mvcOptions = null)
     {
         builder.Services.AddControllers(options =>
                 {
                     if (mvcOptions != null)
                         mvcOptions(options);
-                    if(addSupportforJsonPatch)
-                    {
-                        options.InputFormatters.Insert(0, MDevJsonPatchIF.GetJsonPatchInputFormatter());
-                    }
                 })
                 .ConfigureApiBehaviorOptions(options =>
                 {
