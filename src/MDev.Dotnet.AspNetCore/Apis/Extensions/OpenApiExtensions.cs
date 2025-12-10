@@ -19,9 +19,10 @@ public static class OpenApiExtensions
                         return Task.CompletedTask;
                     }
 
-                    foreach (var server in document.Servers)
+                    foreach (var server in document.Servers
+                                    .Where(e => !(e is null) && !string.IsNullOrWhiteSpace(e.Url)))
                     {
-                        server.Url = server.Url.Replace("http://", "https://");
+                        server.Url = server.Url!.Replace("http://", "https://");
                     }
                     return Task.CompletedTask;
                 });
