@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -178,7 +179,12 @@ public class PersistentService
 
         var result = new List<string>();
 
-        await foreach (var blobItem in blobContainerClient.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
+        var options = new GetBlobsOptions()
+        {
+            Prefix = prefix
+        };
+
+        await foreach (var blobItem in blobContainerClient.GetBlobsAsync(options, cancellationToken: cancellationToken))
         {
             var blobClient = blobContainerClient.GetBlobClient(blobItem.Name);
             var uri = await GetBlobClientUriWithSasAsync(blobClient, cancellationToken: cancellationToken);
@@ -225,7 +231,12 @@ public class PersistentService
             _ = await blobContainerClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
         else
         {
-            await foreach (var blobItem in blobContainerClient.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
+            var options = new GetBlobsOptions()
+            {
+                Prefix = prefix
+            };
+
+            await foreach (var blobItem in blobContainerClient.GetBlobsAsync(options, cancellationToken: cancellationToken))
             {
                 var blobClient = blobContainerClient.GetBlobClient(blobItem.Name);
                 _ = await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
