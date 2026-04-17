@@ -15,7 +15,7 @@ on:
 
 jobs:
   dotnet:
-    uses: mathieumack/MyGithubActions/.github/workflows/dotnetlib.yml@main
+    uses: mathieumack/MyGithubActions/.github/workflows/dotnetlib.yml@copilot/fix-build-ci-dotnet-failed
     with:
       publishToNuget: ${{ github.event.inputs.publishToNuget == true }}
       dotnet-version: |
