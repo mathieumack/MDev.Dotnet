@@ -155,7 +155,7 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bind configuration object on section and also make it available via <see cref="IOptions{T}"/>.
+    /// Bind a configuration section to a settings object and also make it available via <see cref="IOptions{T}"/>.
     /// Throws if the section is missing from configuration.
     /// </summary>
     /// <typeparam name="T">Type of the settings object.</typeparam>
@@ -176,7 +176,7 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bind configuration object to be available with <see cref="IOptions{T}"/>.
+    /// Bind a configuration section to a settings object so that it is available via <see cref="IOptions{T}"/>.
     /// Throws if the section is missing from configuration.
     /// </summary>
     /// <typeparam name="T">Type of the settings object.</typeparam>
