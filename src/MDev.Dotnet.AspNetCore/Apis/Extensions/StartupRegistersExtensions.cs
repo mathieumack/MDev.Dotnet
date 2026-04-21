@@ -75,11 +75,13 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bing configuration object on section
+    /// Bind configuration object on section and also make it available via <see cref="IOptions{T}"/>.
+    /// Throws if the section is missing from configuration.
     /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
     /// <param name="builder"></param>
-    /// <param name="bindObject">Output binded object</param>
-    /// <param name="sectionName">section name from configuration</param>
+    /// <param name="bindObject">Output bound object.</param>
+    /// <param name="sectionName">Section name from configuration.</param>
     /// <returns></returns>
     public static IHostApplicationBuilder BindConfiguration<T>(this IHostApplicationBuilder builder, out T bindObject, string sectionName) where T : class, new()
     {
@@ -94,10 +96,12 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bing configuration object to be available with IOptions<T>
+    /// Bind configuration object to be available with <see cref="IOptions{T}"/>.
+    /// Throws if the section is missing from configuration.
     /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
     /// <param name="builder"></param>
-    /// <param name="sectionName">section name from configuration</param>
+    /// <param name="sectionName">Section name from configuration.</param>
     /// <returns></returns>
     public static IHostApplicationBuilder BindConfiguration<T>(this IHostApplicationBuilder builder, string sectionName) where T : class, new()
     {
@@ -107,11 +111,58 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bing configuration object on section
+    /// Attempt to bind an optional configuration section.
+    /// If the section does not exist the method returns without registering anything and
+    /// <paramref name="bindObject"/> is set to a default-constructed instance.
     /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
     /// <param name="builder"></param>
-    /// <param name="bindObject">Output binded object</param>
-    /// <param name="sectionName">section name from configuration</param>
+    /// <param name="bindObject">Output bound object; default-constructed when the section is absent.</param>
+    /// <param name="sectionName">Section name from configuration.</param>
+    /// <returns></returns>
+    public static IHostApplicationBuilder TryBindConfiguration<T>(this IHostApplicationBuilder builder, out T bindObject, string sectionName) where T : class, new()
+    {
+        bindObject = new();
+
+        var section = builder.Configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return builder;
+
+        builder.Services.Configure<T>(section);
+        section.Bind(bindObject);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Attempt to bind an optional configuration section so that it is available via
+    /// <see cref="IOptions{T}"/>.  If the section does not exist the method returns
+    /// without registering anything.
+    /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
+    /// <param name="builder"></param>
+    /// <param name="sectionName">Section name from configuration.</param>
+    /// <returns></returns>
+    public static IHostApplicationBuilder TryBindConfiguration<T>(this IHostApplicationBuilder builder, string sectionName) where T : class, new()
+    {
+        var section = builder.Configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return builder;
+
+        builder.Services.Configure<T>(section);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Bind configuration object on section and also make it available via <see cref="IOptions{T}"/>.
+    /// Throws if the section is missing from configuration.
+    /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="bindObject">Output bound object.</param>
+    /// <param name="sectionName">Section name from configuration.</param>
     /// <returns></returns>
     public static IServiceCollection BindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, out T bindObject, string sectionName) where T : class, new()
     {
@@ -125,14 +176,63 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
-    /// Bing configuration object to be available with IOptions<T>
+    /// Bind configuration object to be available with <see cref="IOptions{T}"/>.
+    /// Throws if the section is missing from configuration.
     /// </summary>
-    /// <param name="builder"></param>
-    /// <param name="sectionName">section name from configuration</param>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName">Section name from configuration.</param>
     /// <returns></returns>
     public static IServiceCollection BindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, string sectionName) where T : class, new()
     {
         services.Configure<T>(configuration.GetRequiredSection(sectionName));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Attempt to bind an optional configuration section.
+    /// If the section does not exist the method returns without registering anything and
+    /// <paramref name="bindObject"/> is set to a default-constructed instance.
+    /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="bindObject">Output bound object; default-constructed when the section is absent.</param>
+    /// <param name="sectionName">Section name from configuration.</param>
+    /// <returns></returns>
+    public static IServiceCollection TryBindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, out T bindObject, string sectionName) where T : class, new()
+    {
+        bindObject = new();
+
+        var section = configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return services;
+
+        services.Configure<T>(section);
+        section.Bind(bindObject);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Attempt to bind an optional configuration section so that it is available via
+    /// <see cref="IOptions{T}"/>.  If the section does not exist the method returns
+    /// without registering anything.
+    /// </summary>
+    /// <typeparam name="T">Type of the settings object.</typeparam>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName">Section name from configuration.</param>
+    /// <returns></returns>
+    public static IServiceCollection TryBindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, string sectionName) where T : class, new()
+    {
+        var section = configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return services;
+
+        services.Configure<T>(section);
 
         return services;
     }

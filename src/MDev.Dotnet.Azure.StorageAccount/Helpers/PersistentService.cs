@@ -264,9 +264,10 @@ public class PersistentService
         if (metadatas != null)
         {
             // Remove diacritics by default on metadatas
-            foreach (var metadata in metadatas)
-                metadatas[metadata.Key] = RemoveDiacritics(metadata.Value);
-            blobClient.SetMetadata(metadatas, cancellationToken: cancellationToken);
+            var normalizedMetadatas = metadatas.ToDictionary(
+                kvp => kvp.Key,
+                kvp => RemoveDiacritics(kvp.Value));
+            await blobClient.SetMetadataAsync(normalizedMetadatas, cancellationToken: cancellationToken);
         }
 
         _logger.LogDebug("File {FileName} saved", fileName);

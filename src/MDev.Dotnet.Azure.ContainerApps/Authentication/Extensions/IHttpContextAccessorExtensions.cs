@@ -27,11 +27,14 @@ public static class IHttpContextAccessorExtensions
     {
         var token = httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL");
 
+        if (string.IsNullOrWhiteSpace(token))
+            return Enumerable.Empty<UserClaim>();
+
         var decodedBytes = Convert.FromBase64String(token);
         using var memoryStream = new MemoryStream(decodedBytes);
         var clientPrincipal = await JsonSerializer.DeserializeAsync<MsClientPrincipal>(memoryStream);
 
-        return clientPrincipal.Claims;
+        return clientPrincipal?.Claims ?? Enumerable.Empty<UserClaim>();
     }
 
     public static string GetUserValue(this IHttpContextAccessor httpContextAccessor, string headerName, bool decode = false)
