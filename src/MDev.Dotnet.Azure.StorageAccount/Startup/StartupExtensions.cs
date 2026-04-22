@@ -14,23 +14,40 @@ public static class StartupExtensions
     /// <summary>
     /// Register Azure storage configuration
     /// Register a <see cref="BlobServiceClient"/> as scoped for storage access.
-    /// Register keynamed <see cref="QueueClient"/> for each <paramref name="queues"/>
+    /// Register keynamed <see cref="QueueClient"/> for each configured queue.
     /// </summary>
     /// <param name="builder"></param>
-    /// <param name="queues"></param>
+    /// <param name="credentials"></param>
     /// <returns></returns>
     public static IHostApplicationBuilder RegisterAzureStorage(this IHostApplicationBuilder builder,
                                                                 TokenCredential credentials)
     {
+        builder.Services.RegisterAzureStorage(builder.Configuration, credentials);
+        return builder;
+    }
+
+    /// <summary>
+    /// Register Azure storage configuration
+    /// Register a <see cref="BlobServiceClient"/> as scoped for storage access.
+    /// Register keynamed <see cref="QueueClient"/> for each configured queue.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="credentials"></param>
+    /// <returns></returns>
+    public static IServiceCollection RegisterAzureStorage(this IServiceCollection services,
+                                                           IConfiguration configuration,
+                                                           TokenCredential credentials)
+    {
         // Storage account
         var storageSettings = new StorageAccountSettings();
-        builder.Configuration.GetRequiredSection(StorageAccountSettings.SectionName)
+        configuration.GetRequiredSection(StorageAccountSettings.SectionName)
             .Bind(storageSettings, options =>
             {
                 options.ErrorOnUnknownConfiguration = true;
             });
 
-        builder.Services.AddScoped(sp =>
+        services.AddScoped(sp =>
         {
             return new BlobServiceClient(new Uri(storageSettings.BlobsEndpoint), credentials);
         });
@@ -52,10 +69,10 @@ public static class StartupExtensions
                     queueClients.Add(client);
                 }
 
-                builder.Services.AddKeyedSingleton(queue.Id, new QueuesService(queueClients));
+                services.AddKeyedSingleton(queue.Id, new QueuesService(queueClients));
             }
         }
 
-        return builder;
+        return services;
     }
 }

@@ -107,6 +107,45 @@ public static class StartupRegistersExtensions
     }
 
     /// <summary>
+    /// Optionally bind configuration object on section. Silent no-op when the section is absent.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="bindObject">Output bound object, or a default instance when the section is absent</param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IHostApplicationBuilder TryBindConfiguration<T>(this IHostApplicationBuilder builder, out T bindObject, string sectionName) where T : class, new()
+    {
+        bindObject = new();
+
+        var section = builder.Configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return builder;
+
+        builder.Services.Configure<T>(section);
+
+        section.Bind(bindObject, options => options.ErrorOnUnknownConfiguration = true);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Optionally bind configuration object to be available with IOptions<T>. Silent no-op when the section is absent.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IHostApplicationBuilder TryBindConfiguration<T>(this IHostApplicationBuilder builder, string sectionName) where T : class, new()
+    {
+        var section = builder.Configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return builder;
+
+        builder.Services.Configure<T>(section);
+
+        return builder;
+    }
+
+    /// <summary>
     /// Bing configuration object on section
     /// </summary>
     /// <param name="builder"></param>
@@ -136,4 +175,45 @@ public static class StartupRegistersExtensions
 
         return services;
     }
-} 
+
+    /// <summary>
+    /// Optionally bind configuration object on section. Silent no-op when the section is absent.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="bindObject">Output bound object, or a default instance when the section is absent</param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IServiceCollection TryBindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, out T bindObject, string sectionName) where T : class, new()
+    {
+        bindObject = new();
+
+        var section = configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return services;
+
+        services.Configure<T>(section);
+
+        section.Bind(bindObject, options => options.ErrorOnUnknownConfiguration = true);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Optionally bind configuration object to be available with IOptions<T>. Silent no-op when the section is absent.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName">section name from configuration</param>
+    /// <returns></returns>
+    public static IServiceCollection TryBindConfiguration<T>(this IServiceCollection services, IConfiguration configuration, string sectionName) where T : class, new()
+    {
+        var section = configuration.GetSection(sectionName);
+        if (!section.Exists())
+            return services;
+
+        services.Configure<T>(section);
+
+        return services;
+    }
+}
