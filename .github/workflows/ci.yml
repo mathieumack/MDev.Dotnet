@@ -14,7 +14,20 @@ on:
           type: boolean
 
 jobs:
+  dotnet-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mathieumack/MyGithubActions/actions/buildandtestdotnet@main
+        with:
+          workingDirectory: 'src'
+          dotnet-version: |
+            9.0.x
+            10.0.x
+          version: '0.0.0'
   dotnet:
+    if: github.event_name != 'pull_request'
     uses: mathieumack/MyGithubActions/.github/workflows/dotnetlib.yml@main
     with:
       sourceDirectoryPath: 'src'
