@@ -21,9 +21,13 @@ public class AsyncOperationRequestsService
 
     internal async Task HandleAsync(AsyncOperationRequestMessage item, CancellationToken cancellationToken)
     {
+        var safeOperationName = (item.OperationName ?? string.Empty)
+            .Replace("\r", string.Empty)
+            .Replace("\n", string.Empty);
+
         if(!handlers.Any(e => e.HandlerOperationName.Equals(item.OperationName)))
         {
-            logger.LogInformation("async.operation : No service registered for {operation}", item.OperationName);
+            logger.LogInformation("async.operation : No service registered for {operation}", safeOperationName);
             return;
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Text.Json;
 using System.Web;
 
@@ -7,6 +8,20 @@ namespace MDev.Dotnet.Azure.ContainerApps.Authentication.Extensions;
 
 public static class IHttpContextAccessorExtensions
 {
+    private static string SanitizeForLog(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        var sanitized = value
+            .Replace("\r", string.Empty)
+            .Replace("\n", string.Empty);
+
+        return new string(sanitized.Where(c => !char.IsControl(c) || c == '\t').ToArray());
+    }
+
     public static string GetUserId(this IHttpContextAccessor httpContextAccessor, bool decode = false)
     {
         return httpContextAccessor.GetUserValue("X-MS-CLIENT-PRINCIPAL-ID", decode);
@@ -48,7 +63,9 @@ public static class IHttpContextAccessorExtensions
     {
         foreach (var header in contextAccessor.HttpContext.Request.Headers)
         {
-            logger.LogInformation("{HeaderName}: {HeaderValue}", header.Key, header.Value);
+            var sanitizedHeaderName = SanitizeForLog(header.Key);
+            var sanitizedHeaderValue = SanitizeForLog(header.Value.ToString());
+            logger.LogInformation("{HeaderName}: {HeaderValue}", sanitizedHeaderName, sanitizedHeaderValue);
         }
     }
 }
