@@ -618,8 +618,32 @@ app.Run();
         "Id": "reports",
         "Queues": ["report-generation"]
       }
-    ]
+    ],
+    "QueueClients": ["order-processing"]
   }
+}
+```
+
+#### Using a Named QueueClient for Message Retrieval
+
+```csharp
+using Azure.Storage.Queues;
+
+public class OrderRetrievalService
+{
+    private readonly QueueClient _orderQueue;
+
+    public OrderRetrievalService(
+        [FromKeyedServices("order-processing")] QueueClient orderQueue)
+    {
+        _orderQueue = orderQueue;
+    }
+
+    public async Task ReceiveOrdersAsync()
+    {
+        var messages = await _orderQueue.ReceiveMessagesAsync();
+        // Process the retrieved messages.
+    }
 }
 ```
 
@@ -747,10 +771,8 @@ public class OrderProcessingService
             Timestamp = DateTime.UtcNow
         };
         
-        var json = JsonSerializer.Serialize(message);
-        
-        // Send to first queue in the "orders" group
-        await _ordersQueue.Clients[0].SendMessageAsync(json);
+        // Send to an available queue in the "orders" group
+        await _ordersQueue.SendMessageAsync(message);
         
         _logger.LogInformation("Order {OrderId} queued", orderId);
     }

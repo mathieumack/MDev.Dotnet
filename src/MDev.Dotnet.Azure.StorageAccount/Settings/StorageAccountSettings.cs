@@ -11,4 +11,6 @@ public class StorageAccountSettings
     public bool QueueMessagesEncodeBase64 { get; set; } = false;
 
     public List<StorageAccountQueuesSettings> Queues { get; set; }
+
+    public List<string> QueueClients { get; set; } = [];
 }
