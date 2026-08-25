@@ -111,7 +111,7 @@ jobs:
     permissions:
       actions: read
       contents: read
-      id-token: write
+      packages: write
     steps:
       - name: Download packages
         uses: actions/download-artifact@v4
@@ -124,23 +124,21 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Log in to NuGet.org with Trusted Publishing
-        id: nuget-login
-        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
-        with:
-          user: ${{ secrets.NUGET_LOGIN_ID }}
-
-      - name: Push packages to NuGet.org
+      - name: Push preview packages to GitHub Packages
         shell: pwsh
         env:
-          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          $source = "https://nuget.pkg.github.com/mathieumack/index.json"
           $packages = @(Get-ChildItem packages -Recurse -Filter *.nupkg)
           if ($packages.Count -eq 0) {
             throw "No NuGet packages were downloaded"
           }
           foreach ($package in $packages) {
-            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            dotnet nuget push $package.FullName `
+              --api-key $env:GH_TOKEN `
+              --source $source `
+              --skip-duplicate
             if ($LASTEXITCODE -ne 0) {
               exit $LASTEXITCODE
             }
