@@ -26,7 +26,9 @@ Choose only the helpers your application needs:
 
 ## Resources
 
-- [Package documentation](docs/packages/)
+- [Documentation](docs/index.md)
+- [Getting started](docs/getting-started.md)
+- [Contributing](docs/contributing.md)
 - [Source code](src/)
 - [NuGet packages](https://www.nuget.org/profiles/mathieumack)
 - [Microsoft Learn for .NET](https://learn.microsoft.com/en-us/dotnet/)
@@ -41,7 +43,7 @@ Install the package that matches your use case:
 dotnet add package MDev.Dotnet.AspNetCore
 ```
 
-Replace the package name with any package listed above. Each [package guide](docs/packages/) contains the required registration, configuration, and usage examples.
+Replace the package name with any package listed above. The [getting-started guide](docs/getting-started.md) and each package guide contain current registration, configuration, and usage examples.
 
 ---
 
@@ -56,6 +58,17 @@ Build consistent ASP.NET Core APIs without repeating standard setup.
 #### Explain
 
 Register controllers and API versions, bind strongly typed configuration, configure OpenAPI, and apply route prefixes through focused extension methods.
+
+#### Main APIs
+
+| API | Purpose |
+| --- | --- |
+| `RegisterControllers<T>()` | Adds controllers, API versioning, lowercase URLs, and model-validation logging |
+| `RegisterConfiguration()` | Loads JSON configuration and environment variables |
+| `BindConfiguration<T>()` | Binds and registers a required configuration section |
+| `RegisterOpenApi()` | Registers OpenAPI and optionally rewrites or removes server URLs |
+| `AddRoutesPrefix()` | Applies a path base, such as `/api`, to the application |
+| `GetErrors()` | Returns model-state errors as a single message |
 
 #### Resources
 
@@ -82,6 +95,18 @@ Add observability, authentication context, and asynchronous Dapr workflows to Az
 
 Configure OpenTelemetry for Azure Monitor or OTLP, access the authenticated Container Apps principal, and handle Dapr pub/sub operations.
 
+#### Main APIs
+
+| API | Purpose |
+| --- | --- |
+| `RegisterOpenTelemetry()` | Configures logs, metrics, and traces for Azure Monitor or OTLP |
+| `GetUserId()` / `GetUserFullName()` | Reads identity values supplied by Container Apps authentication |
+| `GetClaims()` | Decodes the authenticated principal's claims |
+| `GetUserValue()` | Reads a named Container Apps authentication header |
+| `AsyncOperationRequestsService` | Dispatches Dapr operation messages to matching handlers |
+| `IAsyncOperationRequestMessageHandler` | Defines a handler for an asynchronous operation |
+| `[RequireDaprApiToken]` | Validates the `dapr-api-token` request header |
+
 #### Resources
 
 - [Documentation](docs/packages/azure-containerapps.md)
@@ -107,6 +132,13 @@ Connect Entity Framework Core contexts to Azure Cosmos DB with secure Azure cred
 
 Register a Cosmos DB `DbContext` from application configuration and authenticate with an Azure `TokenCredential`, including managed identity.
 
+#### Main APIs
+
+| API | Purpose |
+| --- | --- |
+| `RegisterCosmosDb<T>(TokenCredential)` | Registers an EF Core Cosmos DB context from the `CosmosDb` configuration section |
+| `RegisterCosmosDb<T>(IConfiguration, TokenCredential)` | Provides the same registration from an `IServiceCollection` |
+
 #### Resources
 
 - [Documentation](docs/packages/azure-cosmosdb.md)
@@ -131,6 +163,16 @@ Use Azure Blob Storage and Queue Storage through ready-to-inject services.
 #### Explain
 
 Register storage clients with Azure credentials, manage blobs and SAS access through `PersistentService`, and resolve configured queue clients by key.
+
+#### Main APIs
+
+| API | Purpose |
+| --- | --- |
+| `RegisterAzureStorage()` | Registers blob services and keyed queue clients from configuration |
+| `PersistentService` | Creates and lists containers and uploads, downloads, copies, or deletes blobs |
+| `RetreiveBlobUriAsync()` / `RetreiveBlobsUriAsync()` | Creates read-only SAS URIs for blobs |
+| `QueuesService.SendMessageAsync<T>()` | Sends one message to a configured queue |
+| `QueuesService.SendMessagesAsync<T>()` | Distributes multiple messages across configured queues |
 
 #### Resources
 
@@ -160,6 +202,8 @@ dotnet add package MDev.Dotnet.Azure.StorageAccount
 ## Support / Contribute
 
 If you have a question, problem, or suggestion, [create an issue](https://github.com/mathieumack/MDev.Dotnet/issues) or fork the project and create a pull request.
+
+See the [contributing guide](docs/contributing.md) for build and documentation guidance.
 
 ## Build Status
 
