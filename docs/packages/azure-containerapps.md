@@ -110,7 +110,7 @@ To protect a Dapr callback, set `APP_API_TOKEN` through secure configuration and
 ## Resources
 
 - [Getting started](../getting-started.md)
-- [Source code](../../src/MDev.Dotnet.Azure.ContainerApps/)
+- [Source code](https://github.com/mathieumack/MDev.Dotnet/tree/main/src/MDev.Dotnet.Azure.ContainerApps)
 - [Azure Container Apps documentation](https://learn.microsoft.com/en-us/azure/container-apps/)
 
 [Previous: ASP.NET Core](aspnetcore.md) · [Documentation home](../index.md) · [Next: Azure Cosmos DB](azure-cosmosdb.md)

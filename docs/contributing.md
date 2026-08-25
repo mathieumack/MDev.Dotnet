@@ -23,4 +23,11 @@ The solution targets .NET 9 and .NET 10. Do not commit credentials; use configur
 
 Package documentation belongs in `docs/packages/`. Use relative links for repository files and link platform guidance to [Microsoft Learn](https://learn.microsoft.com/). Verify every command, configuration property, namespace, and method name against the current source.
 
+Build the documentation locally with the same DocFX version used by GitHub Pages:
+
+```bash
+dotnet tool install --global docfx --version 2.78.5
+docfx docs/docfx.json
+```
+
 [Documentation home](index.md) · [Getting started](getting-started.md)

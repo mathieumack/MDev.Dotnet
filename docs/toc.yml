@@ -1,0 +1,16 @@
+- name: Home
+  href: index.md
+- name: Getting started
+  href: getting-started.md
+- name: Package guides
+  items:
+    - name: ASP.NET Core
+      href: packages/aspnetcore.md
+    - name: Azure Container Apps
+      href: packages/azure-containerapps.md
+    - name: Azure Cosmos DB
+      href: packages/azure-cosmosdb.md
+    - name: Azure Storage Account
+      href: packages/azure-storageaccount.md
+- name: Contributing
+  href: contributing.md
