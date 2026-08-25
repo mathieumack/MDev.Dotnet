@@ -66,7 +66,7 @@ Call `AddRoutesPrefix` before mapping endpoints. The method accepts `api` or `/a
 ## Resources
 
 - [Getting started](../getting-started.md)
-- [Source code](../../src/MDev.Dotnet.AspNetCore/)
+- [Source code](https://github.com/mathieumack/MDev.Dotnet/tree/main/src/MDev.Dotnet.AspNetCore)
 - [ASP.NET Core fundamentals](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/)
 - [OpenAPI in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/overview)
 

@@ -9,6 +9,8 @@
 [![NuGet](https://buildstats.info/nuget/MDev.Dotnet.Azure.CosmosDb?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.Azure.CosmosDb)
 [![NuGet](https://buildstats.info/nuget/MDev.Dotnet.Azure.StorageAccount?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.Azure.StorageAccount)
 
+📚 [Browse the MDev.Dotnet documentation](https://mathieumack.github.io/MDev.Dotnet/)
+
 ## Highlight
 
 MDev.Dotnet packages turn common ASP.NET Core and Azure integration tasks into consistent, dependency-injection-friendly registrations and services.
@@ -26,7 +28,7 @@ Choose only the helpers your application needs:
 
 ## Resources
 
-- [Documentation](docs/index.md)
+- [Documentation](https://mathieumack.github.io/MDev.Dotnet/)
 - [Getting started](docs/getting-started.md)
 - [Contributing](docs/contributing.md)
 - [Source code](src/)

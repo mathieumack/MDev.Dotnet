@@ -99,7 +99,7 @@ Resolve a direct queue client with `[FromKeyedServices("order-results")] QueueCl
 ## Resources
 
 - [Getting started](../getting-started.md)
-- [Source code](../../src/MDev.Dotnet.Azure.StorageAccount/)
+- [Source code](https://github.com/mathieumack/MDev.Dotnet/tree/main/src/MDev.Dotnet.Azure.StorageAccount)
 - [Azure Storage documentation](https://learn.microsoft.com/en-us/azure/storage/)
 
 [Previous: Azure Cosmos DB](azure-cosmosdb.md) · [Documentation home](../index.md)

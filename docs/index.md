@@ -18,4 +18,4 @@ MDev.Dotnet provides focused helpers for ASP.NET Core APIs and Azure services. I
 
 These guides replace the project Wiki as the versioned source of documentation. For platform concepts, see [.NET documentation](https://learn.microsoft.com/en-us/dotnet/), [ASP.NET Core documentation](https://learn.microsoft.com/en-us/aspnet/core/), and [Azure documentation](https://learn.microsoft.com/en-us/azure/).
 
-[Back to the repository README](../README.md)
+[View the source on GitHub](https://github.com/mathieumack/MDev.Dotnet)

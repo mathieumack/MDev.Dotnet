@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ]
+      }
+    ],
+    "output": "../_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "MDev.Dotnet",
+      "_appTitle": "MDev.Dotnet documentation",
+      "_enableSearch": true,
+      "_appFooter": "MDev.Dotnet documentation"
+    },
+    "sitemap": {
+      "baseUrl": "https://mathieumack.github.io/MDev.Dotnet/"
+    }
+  }
+}

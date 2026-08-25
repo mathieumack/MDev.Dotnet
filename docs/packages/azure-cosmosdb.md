@@ -56,7 +56,7 @@ Grant the identity an appropriate [Cosmos DB data-plane role](https://learn.micr
 ## Resources
 
 - [Getting started](../getting-started.md)
-- [Source code](../../src/MDev.Dotnet.Azure.CosmosDb/)
+- [Source code](https://github.com/mathieumack/MDev.Dotnet/tree/main/src/MDev.Dotnet.Azure.CosmosDb)
 - [EF Core Azure Cosmos DB provider](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/)
 - [Azure-hosted application authentication](https://learn.microsoft.com/en-us/dotnet/azure/sdk/authentication/system-assigned-managed-identity)
 
