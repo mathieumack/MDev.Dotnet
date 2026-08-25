@@ -7,40 +7,185 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-        publishToNuget:
-          description: 'Publish to nuget'
-          required: true
-          default: true
-          type: boolean
+      publishToNuget:
+        description: 'Request preview publication (requires approval)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  dotnet-pr:
-    if: github.event_name == 'pull_request'
+  build:
+    name: "CI: Build, test and pack"
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
+    outputs:
+      release_publish: ${{ steps.release-check.outputs.release_publish }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: mathieumack/MyGithubActions/actions/buildandtestdotnet@main
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          workingDirectory: 'src'
           dotnet-version: |
             9.0.x
             10.0.x
-          version: '0.0.0'
-  dotnet:
-    if: github.event_name != 'pull_request'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: src
+
+      - name: Generate package version
+        id: nugetVersion
+        uses: mathieumack/MyGithubActions/actions/nugetversion@main
+        with:
+          nugetPackageIdentifier: ${{ secrets.NUGETPACKAGEIDENTIFIER }}
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore -p:Version=${{ steps.nugetVersion.outputs.buildversion }}
+        working-directory: src
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+        working-directory: src
+
+      - name: Pack
+        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ steps.nugetVersion.outputs.buildversion }}
+        working-directory: src
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-artifact
+          path: src/**/*.nupkg
+          if-no-files-found: error
+
+      - name: Check whether main push came from a pull request
+        id: release-check
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        env:
+          GH_API_URL: ${{ github.api_url }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $headers = @{
+            Authorization = "Bearer " + $env:GH_TOKEN
+            Accept = "application/vnd.github+json"
+            "X-GitHub-Api-Version" = "2022-11-28"
+          }
+          try {
+            $pulls = @(
+              Invoke-RestMethod `
+                -Uri "$env:GH_API_URL/repos/$env:GH_REPOSITORY/commits/$env:GH_SHA/pulls" `
+                -Headers $headers
+            )
+            $mergedPulls = @(
+              $pulls | Where-Object {
+                $_.merged_at -and $_.base.ref -eq "main"
+              }
+            )
+            $shouldPublish = ($mergedPulls.Count -gt 0).ToString().ToLowerInvariant()
+          } catch {
+            Write-Warning "Could not verify that the commit came from a pull request: $_"
+            $shouldPublish = "false"
+          }
+          "release_publish=$shouldPublish" >> $env:GITHUB_OUTPUT
+
+  publish-preview:
+    name: "CD: Publish preview"
+    needs: build
+    if: >-
+      inputs.publishToNuget &&
+      (
+        startsWith(github.ref, 'refs/heads/feature/') ||
+        startsWith(github.ref, 'refs/heads/copilot/') ||
+        startsWith(github.head_ref, 'feature/') ||
+        startsWith(github.head_ref, 'copilot/')
+      )
+    runs-on: ubuntu-latest
+    environment: nuget-preview
     permissions:
+      actions: read
       contents: read
-      issues: read
-      pull-requests: read
-    uses: mathieumack/MyGithubActions/.github/workflows/dotnetlib.yml@main
-    with:
-      sourceDirectoryPath: 'src'
-      publishToNuget: ${{ github.event.inputs.publishToNuget == true }}
-      dotnet-version: |
-        9.0.x
-        10.0.x
-    secrets:
-      NUGETPACKAGEIDENTIFIER: ${{ secrets.NUGETPACKAGEIDENTIFIER }}
-      NUGETAPIKEY: ${{ secrets.NUGETAPIKEY }}
+      id-token: write
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-artifact
+          path: packages
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Log in to NuGet.org with Trusted Publishing
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: mathieumack
+
+      - name: Push packages to NuGet.org
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: |
+          $packages = @(Get-ChildItem packages -Recurse -Filter *.nupkg)
+          if ($packages.Count -eq 0) {
+            throw "No NuGet packages were downloaded"
+          }
+          foreach ($package in $packages) {
+            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }
+
+  publish-release:
+    name: "CD: Publish release"
+    needs: build
+    if: needs.build.outputs.release_publish == 'true'
+    runs-on: ubuntu-latest
+    environment: nuget-release
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-artifact
+          path: packages
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Log in to NuGet.org with Trusted Publishing
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: mathieumack
+
+      - name: Push packages to NuGet.org
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: |
+          $packages = @(Get-ChildItem packages -Recurse -Filter *.nupkg)
+          if ($packages.Count -eq 0) {
+            throw "No NuGet packages were downloaded"
+          }
+          foreach ($package in $packages) {
+            dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }
