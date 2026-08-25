@@ -16,6 +16,21 @@ dotnet add package MDev.Dotnet.AspNetCore
 
 Replace the package name with `MDev.Dotnet.Azure.ContainerApps`, `MDev.Dotnet.Azure.CosmosDb`, or `MDev.Dotnet.Azure.StorageAccount` as appropriate. NuGet restores each package's dependencies; applications that construct credentials directly can also reference [`Azure.Identity`](https://www.nuget.org/packages/Azure.Identity).
 
+### Install a preview package
+
+Preview packages are published to GitHub Packages. Create a [personal access token (classic) with `read:packages` scope](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry#authenticating-with-a-personal-access-token-classic), then add the authenticated source:
+
+```bash
+dotnet nuget add source https://nuget.pkg.github.com/mathieumack/index.json \
+  --name github \
+  --username USERNAME \
+  --password GITHUB_TOKEN \
+  --store-password-in-clear-text
+dotnet add package MDev.Dotnet.AspNetCore --prerelease --source github
+```
+
+Replace `USERNAME` with your GitHub username and `GITHUB_TOKEN` with the token. Keep the token out of source control.
+
 ## Create a minimal API application
 
 The ASP.NET Core package works with `WebApplicationBuilder` through `IHostApplicationBuilder`:
