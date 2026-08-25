@@ -6,7 +6,6 @@
 
 ```bash
 dotnet add package MDev.Dotnet.Azure.CosmosDb
-dotnet add package Azure.Identity
 ```
 
 ## Capabilities
@@ -18,7 +17,7 @@ dotnet add package Azure.Identity
 
 ## Basic setup
 
-Define the `CosmosDb` configuration section:
+Define the required `CosmosDb` configuration section. Unknown properties cause registration to fail.
 
 ```json
 {
@@ -40,4 +39,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.RegisterCosmosDb<MyAppDbContext>(new DefaultAzureCredential());
 ```
 
-See the [source code](../../src/MDev.Dotnet.Azure.CosmosDb/) for registration details and the [EF Core Azure Cosmos DB provider documentation](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/) for data-model guidance.
+`MyAppDbContext` must derive from `Microsoft.EntityFrameworkCore.DbContext`. The helper calls `AddDbContext<T>()` and `UseCosmos(endpoint, credential, databaseName)`, so the context uses the standard scoped lifetime. An `IServiceCollection` overload is also available:
+
+```csharp
+services.RegisterCosmosDb<MyAppDbContext>(
+    configuration,
+    credential);
+```
+
+## Managed identity
+
+`DefaultAzureCredential` uses a managed identity automatically in supported Azure hosts. For a user-assigned identity, configure its client ID using the options documented for [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential).
+
+Grant the identity an appropriate [Cosmos DB data-plane role](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/security/how-to-grant-data-plane-role-based-access); Azure resource-management roles alone do not grant access to items. Use local developer credentials rather than secrets during development.
+
+## Resources
+
+- [Getting started](../getting-started.md)
+- [Source code](../../src/MDev.Dotnet.Azure.CosmosDb/)
+- [EF Core Azure Cosmos DB provider](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/)
+- [Azure-hosted application authentication](https://learn.microsoft.com/en-us/dotnet/azure/sdk/authentication/system-assigned-managed-identity)
+
+[Previous: Azure Container Apps](azure-containerapps.md) · [Documentation home](../index.md) · [Next: Azure Storage Account](azure-storageaccount.md)

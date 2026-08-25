@@ -26,7 +26,9 @@ Choose only the helpers your application needs:
 
 ## Resources
 
-- [Package documentation](docs/packages/)
+- [Documentation](docs/index.md)
+- [Getting started](docs/getting-started.md)
+- [Contributing](docs/contributing.md)
 - [Source code](src/)
 - [NuGet packages](https://www.nuget.org/profiles/mathieumack)
 - [Microsoft Learn for .NET](https://learn.microsoft.com/en-us/dotnet/)
@@ -41,7 +43,7 @@ Install the package that matches your use case:
 dotnet add package MDev.Dotnet.AspNetCore
 ```
 
-Replace the package name with any package listed above. Each [package guide](docs/packages/) contains the required registration, configuration, and usage examples.
+Replace the package name with any package listed above. The [getting-started guide](docs/getting-started.md) and each package guide contain current registration, configuration, and usage examples.
 
 ---
 
@@ -160,6 +162,8 @@ dotnet add package MDev.Dotnet.Azure.StorageAccount
 ## Support / Contribute
 
 If you have a question, problem, or suggestion, [create an issue](https://github.com/mathieumack/MDev.Dotnet/issues) or fork the project and create a pull request.
+
+See the [contributing guide](docs/contributing.md) for build and documentation guidance.
 
 ## Build Status
 
