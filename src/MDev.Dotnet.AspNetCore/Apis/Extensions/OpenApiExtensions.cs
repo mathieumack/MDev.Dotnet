@@ -1,4 +1,4 @@
-
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,7 +10,8 @@ public static class OpenApiExtensions
                                                                 bool forceHttpsServers = false,
                                                                 bool includeServerUrls = true)
     {
-        builder.Services.AddOpenApi(options => {
+        builder.Services.AddApiVersioning().AddOpenApi();
+        builder.Services.Configure<OpenApiOptions>(options => {
             if (forceHttpsServers)
             {
                 options.AddDocumentTransformer((document, context, cancellationToken) => {

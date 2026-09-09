@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- The [.NET 9 or .NET 10 SDK](https://dotnet.microsoft.com/download)
+- The [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - An ASP.NET Core project
 - For Azure packages, an Azure identity with the required data-plane roles
 

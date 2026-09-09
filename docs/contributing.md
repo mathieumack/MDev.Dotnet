@@ -17,7 +17,7 @@ Questions, bug reports, and feature requests are welcome in [GitHub Issues](http
 5. Run applicable tests if test projects are added or changed.
 6. Open a pull request describing the behavior and validation.
 
-The solution targets .NET 9 and .NET 10. Do not commit credentials; use configuration providers, environment variables, managed identity, or another secure secret store.
+The solution targets .NET 10. Do not commit credentials; use configuration providers, environment variables, managed identity, or another secure secret store.
 
 ## Documentation
 

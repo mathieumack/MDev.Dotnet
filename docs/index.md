@@ -18,4 +18,8 @@ MDev.Dotnet provides focused helpers for ASP.NET Core APIs and Azure services. I
 
 These guides replace the project Wiki as the versioned source of documentation. For platform concepts, see [.NET documentation](https://learn.microsoft.com/en-us/dotnet/), [ASP.NET Core documentation](https://learn.microsoft.com/en-us/aspnet/core/), and [Azure documentation](https://learn.microsoft.com/en-us/azure/).
 
+## Support policy and release notes
+
+MDev.Dotnet supports .NET 10. .NET 9 support is retired in the next release; .NET 11 will be added after its stable release.
+
 [View the source on GitHub](https://github.com/mathieumack/MDev.Dotnet)
