@@ -51,7 +51,9 @@ public static class StartupRegistersExtensions
         builder.Services.AddRouting(route => route.LowercaseUrls = true);
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddApiVersioning();
+        builder.Services.AddApiVersioning()
+                        .AddMvc()
+                        .AddApiExplorer();
 
         return builder;
     }

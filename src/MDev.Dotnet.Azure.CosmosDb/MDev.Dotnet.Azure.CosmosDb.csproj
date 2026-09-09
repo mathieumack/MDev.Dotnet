@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+	  <TargetFramework>net10.0</TargetFramework>
       <ImplicitUsings>enable</ImplicitUsings>
       <Nullable>enable</Nullable>
 	  <Authors>MACK Mathieu</Authors>
@@ -25,19 +25,9 @@
 	</ItemGroup>
 
   <ItemGroup>
-  	<PackageReference Include="Azure.Identity" Version="1.21.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.6" />
-	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.6" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="10.0.12" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.12" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
   </ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.11" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="10.0.6" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\MDev.Dotnet.AspNetCore\MDev.Dotnet.AspNetCore.csproj" />
-	</ItemGroup>
 </Project>

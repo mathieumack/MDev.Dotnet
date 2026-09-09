@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Logging;
 using MDev.Dotnet.AspNetCore.AsyncOperations.Messages;
 using MDev.Dotnet.AspNetCore.AsyncOperations.Services.Handlers;
-using Asp.Versioning;
-
 namespace MDev.Dotnet.AspNetCore.AsyncOperations.Controllers.v1;
 
 [ApiExplorerSettings(IgnoreApi = true)]
