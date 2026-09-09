@@ -60,4 +60,4 @@ Grant the identity an appropriate [Cosmos DB data-plane role](https://learn.micr
 - [EF Core Azure Cosmos DB provider](https://learn.microsoft.com/en-us/ef/core/providers/cosmos/)
 - [Azure-hosted application authentication](https://learn.microsoft.com/en-us/dotnet/azure/sdk/authentication/system-assigned-managed-identity)
 
-[Previous: Azure Container Apps](azure-containerapps.md) · [Documentation home](../index.md) · [Next: Azure Storage Account](azure-storageaccount.md)
+[Previous: Azure Container Apps Jobs](azure-containerapps-jobs.md) · [Documentation home](../index.md) · [Next: Azure Storage Account](azure-storageaccount.md)
