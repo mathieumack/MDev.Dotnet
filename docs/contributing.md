@@ -14,7 +14,12 @@ Questions, bug reports, and feature requests are welcome in [GitHub Issues](http
    dotnet build src/MDev.Dotnet.sln --no-restore
    ```
 
-5. Run applicable tests if test projects are added or changed.
+5. Run the unit tests:
+
+   ```bash
+   dotnet test src/MDev.Dotnet.sln --no-build
+   ```
+
 6. Open a pull request describing the behavior and validation.
 
 The solution targets .NET 10. Do not commit credentials; use configuration providers, environment variables, managed identity, or another secure secret store.
