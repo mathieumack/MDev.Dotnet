@@ -13,6 +13,7 @@ MDev.Dotnet provides focused helpers for ASP.NET Core APIs and Azure services. I
 | --- | --- |
 | [MDev.Dotnet.AspNetCore](packages/aspnetcore.md) | Controllers, configuration binding, OpenAPI, and route prefixes |
 | [MDev.Dotnet.Azure.ContainerApps](packages/azure-containerapps.md) | OpenTelemetry, Container Apps authentication headers, and Dapr operations |
+| [MDev.Dotnet.Azure.ContainerApps.Jobs](packages/azure-containerapps-jobs.md) | Generic-host telemetry, shutdown flushing, and managed identity for Container Apps Jobs |
 | [MDev.Dotnet.Azure.CosmosDb](packages/azure-cosmosdb.md) | Entity Framework Core Cosmos DB registration with Azure credentials |
 | [MDev.Dotnet.Azure.StorageAccount](packages/azure-storageaccount.md) | Blob persistence, SAS URIs, and Azure Queue clients |
 

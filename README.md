@@ -5,6 +5,7 @@
 [![.NET](https://github.com/mathieumack/MDev.Dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/mathieumack/MDev.Dotnet/actions/workflows/ci.yml)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.AspNetCore?style=flat&label=MDev.Dotnet.AspNetCore%20)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.ContainerApps?style=flat&label=MDev.Dotnet.Azure.ContainerApps%20)
+![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.ContainerApps.Jobs?style=flat&label=MDev.Dotnet.Azure.ContainerApps.Jobs%20)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.CosmosDb?style=flat&label=MDev.Dotnet.Azure.CosmosDb%20)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.StorageAccount?style=flat&label=MDev.Dotnet.Azure.StorageAccount%20)
 
@@ -22,6 +23,7 @@ Choose only the helpers your application needs:
 | --- | --- | --- |
 | [`MDev.Dotnet.AspNetCore`](https://nuget.org/packages/MDev.Dotnet.AspNetCore) | Controllers, configuration binding, API versioning, OpenAPI, and route prefixes | [Read the guide](docs/packages/aspnetcore.md) |
 | [`MDev.Dotnet.Azure.ContainerApps`](https://nuget.org/packages/MDev.Dotnet.Azure.ContainerApps) | OpenTelemetry, Container Apps authentication, and Dapr async operations | [Read the guide](docs/packages/azure-containerapps.md) |
+| [`MDev.Dotnet.Azure.ContainerApps.Jobs`](https://nuget.org/packages/MDev.Dotnet.Azure.ContainerApps.Jobs) | Generic-host telemetry flushing and managed identity for Container Apps Jobs | [Read the guide](docs/packages/azure-containerapps-jobs.md) |
 | [`MDev.Dotnet.Azure.CosmosDb`](https://nuget.org/packages/MDev.Dotnet.Azure.CosmosDb) | Entity Framework Core Cosmos DB registration with token credentials | [Read the guide](docs/packages/azure-cosmosdb.md) |
 | [`MDev.Dotnet.Azure.StorageAccount`](https://nuget.org/packages/MDev.Dotnet.Azure.StorageAccount) | Blob persistence, SAS access, and keyed queue clients | [Read the guide](docs/packages/azure-storageaccount.md) |
 

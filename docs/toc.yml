@@ -8,6 +8,8 @@
       href: packages/aspnetcore.md
     - name: Azure Container Apps
       href: packages/azure-containerapps.md
+    - name: Azure Container Apps Jobs
+      href: packages/azure-containerapps-jobs.md
     - name: Azure Cosmos DB
       href: packages/azure-cosmosdb.md
     - name: Azure Storage Account
