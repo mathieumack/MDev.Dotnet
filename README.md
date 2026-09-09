@@ -2,12 +2,11 @@
 
 > Production-ready helpers for building .NET web APIs and integrating Azure services with less boilerplate.
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mathieumack_MDev.Dotnet&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mathieumack_MDev.Dotnet)
 [![.NET](https://github.com/mathieumack/MDev.Dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/mathieumack/MDev.Dotnet/actions/workflows/ci.yml)
-[![NuGet](https://buildstats.info/nuget/MDev.Dotnet.AspNetCore?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.AspNetCore)
-[![NuGet](https://buildstats.info/nuget/MDev.Dotnet.Azure.ContainerApps?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.Azure.ContainerApps)
-[![NuGet](https://buildstats.info/nuget/MDev.Dotnet.Azure.CosmosDb?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.Azure.CosmosDb)
-[![NuGet](https://buildstats.info/nuget/MDev.Dotnet.Azure.StorageAccount?includePreReleases=true)](https://nuget.org/packages/MDev.Dotnet.Azure.StorageAccount)
+![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.AspNetCore?style=flat&label=MDev.Dotnet.AspNetCore%20)
+![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.ContainerApps?style=flat&label=MDev.Dotnet.Azure.ContainerApps%20)
+![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.CosmosDb?style=flat&label=MDev.Dotnet.Azure.CosmosDb%20)
+![NuGet Downloads](https://img.shields.io/nuget/dt/MDev.Dotnet.Azure.StorageAccount?style=flat&label=MDev.Dotnet.Azure.StorageAccount%20)
 
 📚 [Browse the MDev.Dotnet documentation](https://mathieumack.github.io/MDev.Dotnet/)
 
