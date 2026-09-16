@@ -28,6 +28,15 @@ The solution targets .NET 10. Do not commit credentials; use configuration provi
 
 Package documentation belongs in `docs/packages/`. Use relative links for repository files and link platform guidance to [Microsoft Learn](https://learn.microsoft.com/). Verify every command, configuration property, namespace, and method name against the current source.
 
+`SKILL.md` is generated from `docs/agent-guidance.md`, `docs/index.md`, `docs/getting-started.md`, and every package guide linked from the documentation index. When adding a package, configuration option, environment variable, infrastructure requirement, or public usage pattern, update those authoritative sources and regenerate the skill:
+
+```powershell
+pwsh scripts/Generate-Skill.ps1
+pwsh scripts/Generate-Skill.ps1 -Check
+```
+
+Commit the regenerated file. The generator validates package coverage, required headings, repository links, code fences, unresolved placeholders, and content resembling credentials. CI also publishes a version-stamped `mdev-dotnet-skill-*` artifact; use `-SourceVersion` and `-OutputPath` to create the same form locally without replacing the repository copy.
+
 Build the documentation locally with the same DocFX version used by GitHub Pages:
 
 ```bash

@@ -14,7 +14,7 @@ From your project directory, install only the helper you need:
 dotnet add package MDev.Dotnet.AspNetCore
 ```
 
-Replace the package name with `MDev.Dotnet.Azure.ContainerApps`, `MDev.Dotnet.Azure.CosmosDb`, or `MDev.Dotnet.Azure.StorageAccount` as appropriate. NuGet restores each package's dependencies; applications that construct credentials directly can also reference [`Azure.Identity`](https://www.nuget.org/packages/Azure.Identity).
+Replace the package name with `MDev.Dotnet.Azure.ContainerApps`, `MDev.Dotnet.Azure.ContainerApps.Jobs`, `MDev.Dotnet.Azure.CosmosDb`, or `MDev.Dotnet.Azure.StorageAccount` as appropriate. NuGet restores each package's dependencies; applications that construct credentials directly can also reference [`Azure.Identity`](https://www.nuget.org/packages/Azure.Identity).
 
 ### Install a preview package
 
@@ -68,6 +68,7 @@ Configure the relevant package before registration, then assign the least-privil
 
 - [ASP.NET Core](packages/aspnetcore.md)
 - [Azure Container Apps](packages/azure-containerapps.md)
+- [Azure Container Apps Jobs](packages/azure-containerapps-jobs.md)
 - [Azure Cosmos DB](packages/azure-cosmosdb.md)
 - [Azure Storage Account](packages/azure-storageaccount.md)
 

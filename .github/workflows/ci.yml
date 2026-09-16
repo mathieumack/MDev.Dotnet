@@ -41,6 +41,24 @@ jobs:
         with:
           nugetPackageIdentifier: ${{ secrets.NUGETPACKAGEIDENTIFIER }}
 
+      - name: Validate generated agent skill
+        shell: pwsh
+        run: ./scripts/Generate-Skill.ps1 -Check
+
+      - name: Generate versioned agent skill
+        shell: pwsh
+        run: >-
+          ./scripts/Generate-Skill.ps1
+          -OutputPath '${{ runner.temp }}/mdev-dotnet-skill/SKILL.md'
+          -SourceVersion '${{ steps.nugetVersion.outputs.buildversion }}'
+
+      - name: Upload agent skill
+        uses: actions/upload-artifact@v7
+        with:
+          name: mdev-dotnet-skill-${{ steps.nugetVersion.outputs.buildversion }}
+          path: ${{ runner.temp }}/mdev-dotnet-skill/SKILL.md
+          if-no-files-found: error
+
       - name: Build
         run: dotnet build --configuration Release --no-restore -p:Version=${{ steps.nugetVersion.outputs.buildversion }}
         working-directory: src
