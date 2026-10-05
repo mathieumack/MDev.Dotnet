@@ -147,10 +147,16 @@
         };
 
         var sourceVersion = readVersion(sourceSkill);
-        var lockPath = TargetDirectory.TrimEnd(
-            System.IO.Path.DirectorySeparatorChar,
-            System.IO.Path.AltDirectorySeparatorChar) + ".lock";
-        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(TargetDirectory));
+        var skillsDirectory = System.IO.Directory.GetParent(
+            TargetDirectory.TrimEnd(
+                System.IO.Path.DirectorySeparatorChar,
+                System.IO.Path.AltDirectorySeparatorChar));
+        var agentDirectory = skillsDirectory.Parent;
+        var transactionDirectory = System.IO.Path.Combine(
+            agentDirectory.FullName,
+            ".mdev-dotnet-skill");
+        var lockPath = System.IO.Path.Combine(transactionDirectory, "install.lock");
+        System.IO.Directory.CreateDirectory(transactionDirectory);
 
         System.IO.FileStream installLock = null;
         for (var attempt = 0; attempt < 200 && installLock == null; attempt++)
@@ -176,6 +182,41 @@
 
         using (installLock)
         {
+            foreach (var stagingDirectory in System.IO.Directory.GetDirectories(
+                transactionDirectory,
+                "installing-*",
+                System.IO.SearchOption.TopDirectoryOnly))
+            {
+                System.IO.Directory.Delete(stagingDirectory, true);
+            }
+
+            var backupDirectories = System.IO.Directory.GetDirectories(
+                transactionDirectory,
+                "backup-*",
+                System.IO.SearchOption.TopDirectoryOnly);
+            if (!System.IO.Directory.Exists(TargetDirectory) &&
+                backupDirectories.Length > 0)
+            {
+                var newestBackup = backupDirectories[0];
+                foreach (var backupDirectory in backupDirectories)
+                {
+                    if (System.IO.Directory.GetLastWriteTimeUtc(backupDirectory) >
+                        System.IO.Directory.GetLastWriteTimeUtc(newestBackup))
+                    {
+                        newestBackup = backupDirectory;
+                    }
+                }
+                System.IO.Directory.CreateDirectory(skillsDirectory.FullName);
+                System.IO.Directory.Move(newestBackup, TargetDirectory);
+            }
+            foreach (var backupDirectory in backupDirectories)
+            {
+                if (System.IO.Directory.Exists(backupDirectory))
+                {
+                    System.IO.Directory.Delete(backupDirectory, true);
+                }
+            }
+
             var shouldInstall = true;
             if (System.IO.File.Exists(targetSkill))
             {
@@ -186,14 +227,12 @@
 
             if (shouldInstall)
             {
-                var stagingDirectory = TargetDirectory.TrimEnd(
-                    System.IO.Path.DirectorySeparatorChar,
-                    System.IO.Path.AltDirectorySeparatorChar) +
-                    ".installing-" + System.Guid.NewGuid().ToString("N");
-                var backupDirectory = TargetDirectory.TrimEnd(
-                    System.IO.Path.DirectorySeparatorChar,
-                    System.IO.Path.AltDirectorySeparatorChar) +
-                    ".backup-" + System.Guid.NewGuid().ToString("N");
+                var stagingDirectory = System.IO.Path.Combine(
+                    transactionDirectory,
+                    "installing-" + System.Guid.NewGuid().ToString("N"));
+                var backupDirectory = System.IO.Path.Combine(
+                    transactionDirectory,
+                    "backup-" + System.Guid.NewGuid().ToString("N"));
 
                 try
                 {
@@ -226,6 +265,7 @@
                     {
                         System.IO.Directory.Move(TargetDirectory, backupDirectory);
                     }
+                    System.IO.Directory.CreateDirectory(skillsDirectory.FullName);
                     System.IO.Directory.Move(stagingDirectory, TargetDirectory);
                     if (System.IO.Directory.Exists(backupDirectory))
                     {
