@@ -4,6 +4,9 @@
       <SourceDirectory>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'skills', 'mdev-dotnet'))</SourceDirectory>
     </_MDevAgentSkillPackage>
   </ItemGroup>
+  <PropertyGroup>
+    <MDevAgentSkillAllowDowngrade Condition="'$(MDevAgentSkillAllowDowngrade)' == ''">false</MDevAgentSkillAllowDowngrade>
+  </PropertyGroup>
 
   <UsingTask TaskName="MDevFindAgentSkillRoot"
              TaskFactory="RoslynCodeTaskFactory"
@@ -46,6 +49,7 @@
     <ParameterGroup>
       <SourceDirectory ParameterType="System.String" Required="true" />
       <TargetDirectory ParameterType="System.String" Required="true" />
+      <AllowDowngrade ParameterType="System.Boolean" Required="true" />
       <InstalledVersion ParameterType="System.String" Output="true" />
     </ParameterGroup>
     <Task>
@@ -176,25 +180,70 @@
             if (System.IO.File.Exists(targetSkill))
             {
                 InstalledVersion = readVersion(targetSkill);
-                shouldInstall = compareVersions(sourceVersion, InstalledVersion) > 0;
+                shouldInstall = AllowDowngrade ||
+                    compareVersions(sourceVersion, InstalledVersion) > 0;
             }
 
             if (shouldInstall)
             {
-                if (System.IO.Directory.Exists(TargetDirectory))
-                {
-                    System.IO.Directory.Delete(TargetDirectory, true);
-                }
+                var stagingDirectory = TargetDirectory.TrimEnd(
+                    System.IO.Path.DirectorySeparatorChar,
+                    System.IO.Path.AltDirectorySeparatorChar) +
+                    ".installing-" + System.Guid.NewGuid().ToString("N");
+                var backupDirectory = TargetDirectory.TrimEnd(
+                    System.IO.Path.DirectorySeparatorChar,
+                    System.IO.Path.AltDirectorySeparatorChar) +
+                    ".backup-" + System.Guid.NewGuid().ToString("N");
 
-                foreach (var sourceFile in System.IO.Directory.GetFiles(
-                    SourceDirectory,
-                    "*",
-                    System.IO.SearchOption.AllDirectories))
+                try
                 {
-                    var relativePath = sourceFile.Substring(SourceDirectory.Length);
-                    var targetFile = System.IO.Path.Combine(TargetDirectory, relativePath);
-                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(targetFile));
-                    System.IO.File.Copy(sourceFile, targetFile, true);
+                    var sourceFiles = System.IO.Directory.GetFiles(
+                        SourceDirectory,
+                        "*",
+                        System.IO.SearchOption.AllDirectories);
+                    foreach (var sourceFile in sourceFiles)
+                    {
+                        var relativePath = sourceFile.Substring(SourceDirectory.Length);
+                        var stagingFile = System.IO.Path.Combine(stagingDirectory, relativePath);
+                        System.IO.Directory.CreateDirectory(
+                            System.IO.Path.GetDirectoryName(stagingFile));
+                        System.IO.File.Copy(sourceFile, stagingFile, true);
+                    }
+
+                    var stagedFiles = System.IO.Directory.GetFiles(
+                        stagingDirectory,
+                        "*",
+                        System.IO.SearchOption.AllDirectories);
+                    var stagedSkill = System.IO.Path.Combine(stagingDirectory, "SKILL.md");
+                    if (stagedFiles.Length != sourceFiles.Length ||
+                        readVersion(stagedSkill) != sourceVersion)
+                    {
+                        throw new System.IO.IOException(
+                            "The staged MDev.Dotnet agent skill is incomplete.");
+                    }
+
+                    if (System.IO.Directory.Exists(TargetDirectory))
+                    {
+                        System.IO.Directory.Move(TargetDirectory, backupDirectory);
+                    }
+                    System.IO.Directory.Move(stagingDirectory, TargetDirectory);
+                    if (System.IO.Directory.Exists(backupDirectory))
+                    {
+                        System.IO.Directory.Delete(backupDirectory, true);
+                    }
+                }
+                catch
+                {
+                    if (System.IO.Directory.Exists(stagingDirectory))
+                    {
+                        System.IO.Directory.Delete(stagingDirectory, true);
+                    }
+                    if (!System.IO.Directory.Exists(TargetDirectory) &&
+                        System.IO.Directory.Exists(backupDirectory))
+                    {
+                        System.IO.Directory.Move(backupDirectory, TargetDirectory);
+                    }
+                    throw;
                 }
                 InstalledVersion = sourceVersion;
             }
@@ -214,7 +263,8 @@
       <_MDevAgentSkillTargetDir>$([MSBuild]::NormalizeDirectory('$(_MDevAgentSkillRoot)', '.agents', 'skills', 'mdev-dotnet'))</_MDevAgentSkillTargetDir>
     </PropertyGroup>
     <MDevInstallLatestAgentSkill SourceDirectory="%(_MDevAgentSkillPackage.SourceDirectory)"
-                                TargetDirectory="$(_MDevAgentSkillTargetDir)">
+                                TargetDirectory="$(_MDevAgentSkillTargetDir)"
+                                AllowDowngrade="$(MDevAgentSkillAllowDowngrade)">
       <Output TaskParameter="InstalledVersion"
               PropertyName="_MDevAgentSkillInstalledVersion" />
     </MDevInstallLatestAgentSkill>
