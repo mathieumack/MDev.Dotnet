@@ -28,6 +28,21 @@ The solution targets .NET 10. Do not commit credentials; use configuration provi
 
 Package documentation belongs in `docs/packages/`. Use relative links for repository files and link platform guidance to [Microsoft Learn](https://learn.microsoft.com/). Verify every command, configuration property, namespace, and method name against the current source.
 
+`SKILL.md` is generated from `docs/agent-guidance.md`, `docs/index.md`, `docs/getting-started.md`, and every package guide linked from the documentation index. When adding a package, configuration option, environment variable, infrastructure requirement, or public usage pattern, update those authoritative sources and regenerate the skill:
+
+```powershell
+pwsh scripts/Generate-Skill.ps1
+pwsh scripts/Generate-Skill.ps1 -Check
+```
+
+Commit the regenerated file. The generator validates package coverage, required headings, repository links, code fences, unresolved placeholders, and content resembling credentials. CI also publishes a version-stamped `mdev-dotnet-skill-*` artifact; use `-SourceVersion` and `-OutputPath` to create the same form locally without replacing the repository copy.
+
+Every library package also contains the skill, its linked documentation, and a `buildTransitive` installer. Building a consuming project copies this payload to the repository's `.agents/skills/mdev-dotnet/` directory, where compatible coding agents can discover it. The newest skill wins when projects reference different package versions. Set `MDevInstallAgentSkill` to `false` to opt out, or set `MDevAgentSkillAllowDowngrade` to `true` for a deliberate downgrade after all projects have moved to an older version. Set `MDevAgentSkillPath` while packing to embed a version-stamped generated file, as CI does. After packing, validate every package payload with:
+
+```powershell
+pwsh scripts/Test-SkillPackages.ps1 -PackageDirectory path/to/packages
+```
+
 Build the documentation locally with the same DocFX version used by GitHub Pages:
 
 ```bash

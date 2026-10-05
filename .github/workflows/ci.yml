@@ -41,6 +41,24 @@ jobs:
         with:
           nugetPackageIdentifier: ${{ secrets.NUGETPACKAGEIDENTIFIER }}
 
+      - name: Validate generated agent skill
+        shell: pwsh
+        run: ./scripts/Generate-Skill.ps1 -Check
+
+      - name: Generate versioned agent skill
+        shell: pwsh
+        run: >-
+          ./scripts/Generate-Skill.ps1
+          -OutputPath '${{ runner.temp }}/mdev-dotnet-skill/SKILL.md'
+          -SourceVersion '${{ steps.nugetVersion.outputs.buildversion }}'
+
+      - name: Upload agent skill
+        uses: actions/upload-artifact@v7
+        with:
+          name: mdev-dotnet-skill-${{ steps.nugetVersion.outputs.buildversion }}
+          path: ${{ runner.temp }}/mdev-dotnet-skill/SKILL.md
+          if-no-files-found: error
+
       - name: Build
         run: dotnet build --configuration Release --no-restore -p:Version=${{ steps.nugetVersion.outputs.buildversion }}
         working-directory: src
@@ -50,14 +68,27 @@ jobs:
         working-directory: src
 
       - name: Pack
-        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ steps.nugetVersion.outputs.buildversion }}
+        run: >-
+          dotnet pack
+          --configuration Release
+          --no-build
+          --output "${{ runner.temp }}/packages"
+          -p:PackageVersion=${{ steps.nugetVersion.outputs.buildversion }}
+          -p:MDevAgentSkillPath="${{ runner.temp }}/mdev-dotnet-skill/SKILL.md"
         working-directory: src
+
+      - name: Validate packaged agent skills
+        shell: pwsh
+        run: >-
+          ./scripts/Test-SkillPackages.ps1
+          -PackageDirectory '${{ runner.temp }}/packages'
+          -ExpectedVersion '${{ steps.nugetVersion.outputs.buildversion }}'
 
       - name: Upload packages
         uses: actions/upload-artifact@v7
         with:
           name: nuget-artifact
-          path: src/**/*.nupkg
+          path: ${{ runner.temp }}/packages/*.nupkg
           if-no-files-found: error
 
       - name: Check whether main push came from a pull request
