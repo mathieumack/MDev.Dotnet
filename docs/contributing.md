@@ -37,6 +37,12 @@ pwsh scripts/Generate-Skill.ps1 -Check
 
 Commit the regenerated file. The generator validates package coverage, required headings, repository links, code fences, unresolved placeholders, and content resembling credentials. CI also publishes a version-stamped `mdev-dotnet-skill-*` artifact; use `-SourceVersion` and `-OutputPath` to create the same form locally without replacing the repository copy.
 
+Every library package also contains the skill, its linked documentation, and a `buildTransitive` installer. Building a consuming project copies this payload to the repository's `.agents/skills/mdev-dotnet/` directory, where compatible coding agents can discover it. Set the MSBuild property `MDevInstallAgentSkill` to `false` to opt out. Set `MDevAgentSkillPath` while packing to embed a version-stamped generated file, as CI does. After packing, validate every package payload with:
+
+```powershell
+pwsh scripts/Test-SkillPackages.ps1 -PackageDirectory path/to/packages
+```
+
 Build the documentation locally with the same DocFX version used by GitHub Pages:
 
 ```bash

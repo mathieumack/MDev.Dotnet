@@ -68,14 +68,27 @@ jobs:
         working-directory: src
 
       - name: Pack
-        run: dotnet pack --configuration Release --no-build -p:PackageVersion=${{ steps.nugetVersion.outputs.buildversion }}
+        run: >-
+          dotnet pack
+          --configuration Release
+          --no-build
+          --output "${{ runner.temp }}/packages"
+          -p:PackageVersion=${{ steps.nugetVersion.outputs.buildversion }}
+          -p:MDevAgentSkillPath="${{ runner.temp }}/mdev-dotnet-skill/SKILL.md"
         working-directory: src
+
+      - name: Validate packaged agent skills
+        shell: pwsh
+        run: >-
+          ./scripts/Test-SkillPackages.ps1
+          -PackageDirectory '${{ runner.temp }}/packages'
+          -ExpectedVersion '${{ steps.nugetVersion.outputs.buildversion }}'
 
       - name: Upload packages
         uses: actions/upload-artifact@v7
         with:
           name: nuget-artifact
-          path: src/**/*.nupkg
+          path: ${{ runner.temp }}/packages/*.nupkg
           if-no-files-found: error
 
       - name: Check whether main push came from a pull request

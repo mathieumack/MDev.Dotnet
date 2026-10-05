@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <MDevAgentSkillPath Condition="'$(MDevAgentSkillPath)' == ''">$(MSBuildThisFileDirectory)..\SKILL.md</MDevAgentSkillPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MDevAgentSkillPath)"
+          Pack="true"
+          PackagePath="skills\mdev-dotnet\SKILL.md"
+          Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)..\docs\**\*.md"
+          Pack="true"
+          PackagePath="skills\mdev-dotnet\docs\%(RecursiveDir)%(Filename)%(Extension)"
+          Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)..\buildTransitive\MDev.Dotnet.AgentSkill.targets"
+          Pack="true"
+          PackagePath="buildTransitive\$(MSBuildProjectName).targets"
+          Visible="false" />
+  </ItemGroup>
+</Project>

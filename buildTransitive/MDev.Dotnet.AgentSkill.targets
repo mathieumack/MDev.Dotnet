@@ -1,0 +1,61 @@
+<Project>
+  <PropertyGroup>
+    <_MDevAgentSkillSourceDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..', 'skills', 'mdev-dotnet'))</_MDevAgentSkillSourceDir>
+  </PropertyGroup>
+
+  <UsingTask TaskName="MDevFindAgentSkillRoot"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <StartDirectory ParameterType="System.String" Required="true" />
+      <RepositoryRoot ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var directory = new System.IO.DirectoryInfo(StartDirectory);
+        System.IO.DirectoryInfo solutionRoot = null;
+
+        while (directory != null)
+        {
+            var gitPath = System.IO.Path.Combine(directory.FullName, ".git");
+            if (System.IO.Directory.Exists(gitPath) || System.IO.File.Exists(gitPath))
+            {
+                RepositoryRoot = directory.FullName;
+                break;
+            }
+
+            if (solutionRoot == null &&
+                directory.GetFiles("*.sln", System.IO.SearchOption.TopDirectoryOnly).Length > 0)
+            {
+                solutionRoot = directory;
+            }
+
+            directory = directory.Parent;
+        }
+
+        RepositoryRoot = RepositoryRoot ?? solutionRoot?.FullName ?? StartDirectory;
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="_InstallMDevAgentSkill"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true' and '$(MDevInstallAgentSkill)' != 'false' and Exists('$(_MDevAgentSkillSourceDir)SKILL.md')">
+    <MDevFindAgentSkillRoot StartDirectory="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="RepositoryRoot" PropertyName="_MDevAgentSkillRoot" />
+    </MDevFindAgentSkillRoot>
+
+    <PropertyGroup>
+      <_MDevAgentSkillTargetDir>$([MSBuild]::NormalizeDirectory('$(_MDevAgentSkillRoot)', '.agents', 'skills', 'mdev-dotnet'))</_MDevAgentSkillTargetDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <_MDevAgentSkillFiles Include="$(_MDevAgentSkillSourceDir)**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_MDevAgentSkillFiles)"
+          DestinationFiles="@(_MDevAgentSkillFiles->'$(_MDevAgentSkillTargetDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <Message Importance="high"
+             Text="Installed MDev.Dotnet agent skill in $(_MDevAgentSkillTargetDir)" />
+  </Target>
+</Project>
